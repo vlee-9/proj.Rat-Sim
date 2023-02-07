@@ -86,7 +86,13 @@ addRatBtn.addEventListener('click', () => {
     let atts = parseInt(feroAtt.textContent) + parseInt(witAtt.textContent) + parseInt(speedAtt.textContent) + parseInt(affectAtt.textContent)
     console.log(atts)
 
-    if (attTotal.textContent > 0 || ratNameInput.value == false || atts != 20) {
+    // ERROR check: repeat names, invalid attribute stats, unnamed rats, unused att points//
+    if (attTotal.textContent > 0 ||
+        ratNameInput.value == false ||
+        atts != 20 ||
+        rats.map(obj => obj.name).includes(ratNameInput.value)
+        ) {
+        rats.map(obj => obj.name).includes(ratNameInput.value) ? ratError.textContent = `(ERROR: rat already named '${ratNameInput.value}')`: ''
         atts != 20 ? ratError.textContent = "(ERROR: stats invalid)" : '';
         attTotal.textContent > 0 ? ratError.textContent = "(please use All attribute points!)" : '';
         ratNameInput.value === '' ? ratError.textContent = "(please name your rat!)" : '';
@@ -96,10 +102,10 @@ addRatBtn.addEventListener('click', () => {
 
         let newRat = {}
         newRat.name = ratNameInput.value
-        newRat.ferocity = feroAtt.textContent
-        newRat.wit = witAtt.textContent
-        newRat.speed = speedAtt.textContent
-        newRat.affection = affectAtt.textContent
+        newRat.ferocity = parseInt(feroAtt.textContent)
+        newRat.wit = parseInt(witAtt.textContent)
+        newRat.speed = parseInt(speedAtt.textContent)
+        newRat.affection = parseInt(affectAtt.textContent)
         rats.push(newRat)
         addToRatDisplay(newRat)
         console.log(rats)
@@ -116,6 +122,41 @@ addRatBtn.addEventListener('click', () => {
 })
 
 const ratDisplayTray = document.getElementById("rat-tray")
+
+function ratRandomizer() {
+    const names = ["Jogun", "Misser", "Loosh", "Patten", "Lop", "Bóck", "Björn", "lithete", "Ulmm", "Olmaes", "Aptat", "Abby", "Jake", "Tom", "Aless", "Alice", "Tread", "Red", "Holly", "Sister", "Marge", "Kapuy", "Illum", "Ill", "Robin", "Royce", "Jacette", "Lord", "General", "Furry", "Wolf", "Bun-Bun", "Frogert", "Alpine"]
+    let newRat = {
+        name: names[Math.floor(Math.random() * names.length)],
+        ferocity: 1,
+        wit: 1,
+        speed: 1,
+        affection: 1
+    }
+    for (i = 1; i <= 16; i++) {
+        let attributes = ['fr', 'wit', 'sp', 'aff']
+        let attPoint = attributes[Math.floor(Math.random() * attributes.length)]
+        switch (attPoint) {
+            case 'fr':
+                newRat.ferocity++
+                break;
+            case 'wit':
+                newRat.wit++
+                break;
+            case 'sp':
+                newRat.speed++
+                break;
+            case 'aff':
+                newRat.affection++
+                break;
+        }
+    }
+    while (rats.map(obj => obj.name).includes(newRat.name)) {
+        newRat.name = names[Math.floor(Math.random() * names.length)]
+        console.log("switched")
+    }
+    rats.push(newRat)
+    addToRatDisplay(newRat)
+}
 
 function addToRatDisplay(newrat) {
     ratDisplayTray.innerHTML += `
@@ -138,5 +179,7 @@ function addToRatDisplay(newrat) {
             ratElement.remove()
         })
     }
+
+    rats.sort((a, b) => (a.speed > b.speed ? -1 : 1))
 }
 
