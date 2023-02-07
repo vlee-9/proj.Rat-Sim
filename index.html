@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>RatF*ck</title>
+</head>
+
+<body>
+
+    <div class="cust-container">
+        <div class="cust-box">
+            <h3>Attribute points: <span id="att-total">16</span></h3>
+            
+            <input type="text" id="rat-name" placeholder="Rat Name ..?">
+
+            <p>ferocity</p>
+            <div class="att-box">
+                <button id="att-fe-down" class="att-btn"><</button>
+                <p id="att-fe">1</p>
+                <button id="att-fe-up" class="att-btn">></button>
+            </div>
+
+            <p>wit</p>
+            <div class="att-box">
+                <button id="att-wi-down" class="att-btn"><</button>
+                <p id="att-wi">1</p>
+                <button id="att-wi-up" class="att-btn">></button>
+            </div>
+
+            <p>speed</p>
+            <div class="att-box">
+                <button id="att-sp-down" class="att-btn"><</button>
+                <p id="att-sp">1</p>
+                <button id="att-sp-up" class="att-btn">></button>
+            </div>
+
+            <p>affection</p>
+            <div class="att-box">
+                <button id="att-af-down" class="att-btn"><</button>
+                <p id="att-af">1</p>
+                <button id="att-af-up" class="att-btn">></button>
+            </div>
+
+        </div>
+        <button class="btn-basic" id="add-rat">Add Rat</button>
+        <p class="error" id="error-message"></p>
+
+        <div class="rat-array-box" id="rat-tray">
+        </div>
+
+    </div>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
