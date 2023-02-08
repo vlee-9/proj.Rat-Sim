@@ -90,13 +90,15 @@ addRatBtn.addEventListener('click', () => {
     if (attTotal.textContent > 0 ||
         ratNameInput.value == false ||
         atts != 20 ||
-        rats.map(obj => obj.name).includes(ratNameInput.value)
-        ) {
-        rats.map(obj => obj.name).includes(ratNameInput.value) ? ratError.textContent = `(ERROR: rat already named '${ratNameInput.value}')`: ''
+        rats.map(obj => obj.name).includes(ratNameInput.value) ||
+        rats.length > 9
+    ) {
+        rats.length > 9 ? ratError.textContent = '(ERROR: Rat Overload! kill some rats!)' : '';
+        rats.map(obj => obj.name).includes(ratNameInput.value) ? ratError.textContent = `(ERROR: rat already named '${ratNameInput.value}')` : '';
         atts != 20 ? ratError.textContent = "(ERROR: stats invalid)" : '';
         attTotal.textContent > 0 ? ratError.textContent = "(please use All attribute points!)" : '';
         ratNameInput.value === '' ? ratError.textContent = "(please name your rat!)" : '';
-        ratError.style.display = ''
+        ratError.style.display = '';
     }
     else {
 
@@ -106,6 +108,8 @@ addRatBtn.addEventListener('click', () => {
         newRat.wit = parseInt(witAtt.textContent)
         newRat.speed = parseInt(speedAtt.textContent)
         newRat.affection = parseInt(affectAtt.textContent)
+        newRat.hunger = 3
+        newRat.condition = ''
         rats.push(newRat)
         addToRatDisplay(newRat)
         console.log(rats)
@@ -154,8 +158,16 @@ function ratRandomizer() {
         newRat.name = names[Math.floor(Math.random() * names.length)]
         console.log("switched")
     }
-    rats.push(newRat)
-    addToRatDisplay(newRat)
+
+    if (rats.length > 9) {
+        ratError.textContent = '(ERROR: Rat Overload! kill some rats!)'
+        ratError.style.display = '';
+    }
+    else {
+        rats.push(newRat)
+        addToRatDisplay(newRat)
+        ratError.style.display = 'none';
+    }
 }
 
 function addToRatDisplay(newrat) {
@@ -177,9 +189,42 @@ function addToRatDisplay(newrat) {
         killRatBtn[i].addEventListener("click", () => {
             rats = rats.filter(obj => obj.name !== ratID)
             ratElement.remove()
+
+            assignRatID()
         })
     }
 
-    rats.sort((a, b) => (a.speed > b.speed ? -1 : 1))
+    sortRatBySp()
+    assignRatID()
 }
 
+// assigns and reassigns RatID based on place in array
+function assignRatID() {
+    for (i = 0; i < rats.length; i++) {
+        rats[i].ratID = `rats[${i}]`
+    }
+}
+// sorts rat based on speed
+function sortRatBySp() {
+    rats.sort((rat1, rat2) => (rat1.speed > rat2.speed ? -1 : 1))
+}
+
+//test code below
+
+// let obj = [{ name: 'clary', ID: 'obj[0]' }, { name: 'henry', ID: 'obj[01]' }]
+// let testarr = []
+// testFunc()
+// console.log(testarr[0].event)
+// eval(testarr[0].method)
+// function testFunc() {
+//     let x = { event: '' }
+//     x.event = `${obj[0].name}`
+//     x.method = testObjMethod(obj[0].ID)
+//     testarr.push(x)
+// }
+
+// function testObjMethod(x) {
+//     let method = `${x}.condition = 'starved'`
+//     return method
+
+// }
