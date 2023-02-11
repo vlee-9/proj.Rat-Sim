@@ -209,22 +209,111 @@ function sortRatBySp() {
     rats.sort((rat1, rat2) => (rat1.speed > rat2.speed ? -1 : 1))
 }
 
-//test code below
+////////////////////////
+//GAME START TEST CODE//
+////////////////////////
+function startGame() {
+    let locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
+    for (i = 0; i < rats.length; i++) {
+        rats[i].location = locations[Math.floor(Math.random() * locations.length)]
+        console.log(`${rats[i].name} in the ${rats[i].location}`)
+    }
+    playRound()
+}
 
+function currentRound() {
+    let round = 1
+
+    return () => {
+        let x = `Round ${round}`
+        // addToPlot(x, '') // add method for Round display later
+        for (i = 0; i < rats.length; i++) {
+            ratTurn(rats[i])
+        }
+        round++
+        let plotArr = addToPlot()
+        readPlots = setInterval(plotReader(plotArr), 2000)
+    }
+
+}
+const playRound = currentRound()
+
+//PLOTPOINT AND METHOD KEEPER//
+function plotKeeper() {
+    let plotpoints = []
+    return (plotline, method) => {
+        let x = {}
+        x.text = plotline
+        x.method = method
+        plotpoints.push(x)
+        console.log(plotpoints)
+        plotline == undefined ? plotpoints.pop() : '';
+        return plotpoints
+    }
+
+}
+const addToPlot = plotKeeper()
+
+function plotReader(plotArr) {
+    let toRead = plotArr
+    let plotpoint = 0
+    console.log(toRead.length)
+    return () => {
+        console.log(toRead[plotpoint].text)
+        plotpoint++
+        if (plotpoint >= toRead.length) {
+            clearInterval(readPlots)
+            toRead = []
+        }
+    }
+}
+
+
+//RAT TURN//
+function ratTurn(protagRat) {
+    let motives = ['hungry', 'moving', 'lonely'] //motive()
+    let x = motives[Math.floor(Math.random() * motives.length)]
+    let y
+    let m
+    switch (x) {
+        case 'hungry':
+            y = `${protagRat.name} is hungry`
+            m = `console.log(${protagRat.ratID}.condition = 'hungry')`
+            addToPlot(y, m)
+            break;
+        case 'moving':
+            y = `${protagRat.name} is moving`
+            m = `console.log(${protagRat.ratID}.condition = 'moving')`
+            addToPlot(y, m)
+            break;
+        case 'lonely':
+            y = `${protagRat.name} is lonely`
+            m = `console.log(${protagRat.ratID}.condition = 'lonely')`
+            addToPlot(y, m)
+            break;
+    }
+}
+
+
+
+// //test code below
+// //example of 'rats'
 // let obj = [{ name: 'clary', ID: 'obj[0]' }, { name: 'henry', ID: 'obj[01]' }]
+// //example of event array to be read
 // let testarr = []
+
+// //test function for event maker that stores plotpoints and correponding method objects in testarr
 // testFunc()
-// console.log(testarr[0].event)
+
+// //the plot point is read and 'eval()' to use method stored in event array
+// console.log(testarr[0].plotpoint)
 // eval(testarr[0].method)
+// console.log(obj[0].condition)
+
+// //example of plot point added to event array
 // function testFunc() {
-//     let x = { event: '' }
-//     x.event = `${obj[0].name}`
-//     x.method = testObjMethod(obj[0].ID)
+//     let x = {}
+//     x.plotpoint = `${obj[0].name} is out of food`
+//     x.method = `${obj[0].ID}.condition = 'starved'`
 //     testarr.push(x)
-// }
-
-// function testObjMethod(x) {
-//     let method = `${x}.condition = 'starved'`
-//     return method
-
 // }
