@@ -11,7 +11,7 @@
 
 <body>
 
-    <div class="cust-container">
+    <div class="cust-container" id="cust-container">
         <div class="cust-box">
             <h3>Attribute points: <span id="att-total">16</span></h3>
             
@@ -46,20 +46,20 @@
             </div>
 
         </div>
+
         <button class="btn-basic" id="add-rat">Add Rat</button>
         <button class="btn-basic" onclick="ratRandomizer()">Random</button>
-        <p class="error" id="error-message"></p>
+        <button class="btn-basic start-btn" id="start-btn">start!</button>
 
-        <div class="rat-array-box" id="rat-tray">
-        </div>
+        <p class="error" id="error-message"></p>
+        <div class="rat-array-box" id="rat-tray"></div>
 
     </div>
 
-    <div class="game-container">
-        <button class="btn-basic" id="start-btn">start!</button>
-        <div class="text-container" id="text-box">
-
-        </div>
+    <div class="game-container" id="game-container">
+        <button class="btn-basic" id="round-btn" onclick="playRound()">proceed</button>
+        <div class="text-container" id="text-box"></div>
+        <div class="rat-status-box" id="rat-stats"></div>
     </div>
     
 

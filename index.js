@@ -23,6 +23,12 @@ const killRatBtn = document.getElementsByClassName("kill-btn")
 const ratNameInput = document.getElementById("rat-name")
 
 const startBtn = document.getElementById('start-btn')
+startBtn.style.display = 'none'
+const roundStart = document.getElementById('round-btn')
+
+const custContainer = document.getElementById('cust-container')
+const gameContainer = document.getElementById('game-container')
+gameContainer.style.display = 'none'
 const textBox = document.getElementById('text-box')
 
 let rats = []
@@ -106,6 +112,8 @@ addRatBtn.addEventListener('click', () => {
     else {
 
         let newRat = {}
+        const locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
+    
         newRat.name = ratNameInput.value
         newRat.ferocity = parseInt(feroAtt.textContent)
         newRat.wit = parseInt(witAtt.textContent)
@@ -113,6 +121,7 @@ addRatBtn.addEventListener('click', () => {
         newRat.affection = parseInt(affectAtt.textContent)
         newRat.hunger = 3
         newRat.condition = ''
+        newRat.location = locations[Math.floor(Math.random() * locations.length)]
         rats.push(newRat)
         addToRatDisplay(newRat)
         console.log(rats)
@@ -132,12 +141,15 @@ const ratDisplayTray = document.getElementById("rat-tray")
 
 function ratRandomizer() {
     const names = ["Jogun", "Misser", "Loosh", "Patten", "Lop", "Bóck", "Björn", "lithete", "Ulmm", "Olmaes", "Aptat", "Abby", "Jake", "Tom", "Aless", "Alice", "Tread", "Red", "Holly", "Sister", "Marge", "Kapuy", "Illum", "Ill", "Robin", "Royce", "Jacette", "Lord", "General", "Furry", "Wolf", "Bun-Bun", "Frogert", "Alpine"]
+    const locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
     let newRat = {
         name: names[Math.floor(Math.random() * names.length)],
         ferocity: 1,
         wit: 1,
         speed: 1,
-        affection: 1
+        affection: 1,
+        condition:'',
+        location: locations[Math.floor(Math.random() * locations.length)]
     }
     for (i = 1; i <= 16; i++) {
         let attributes = ['fr', 'wit', 'sp', 'aff']
@@ -196,6 +208,9 @@ function addToRatDisplay(newrat) {
             assignRatID()
         })
     }
+    if(rats.length >= 4){
+        startBtn.style.display = ''
+    }
 
     sortRatBySp()
     assignRatID()
@@ -217,29 +232,31 @@ function sortRatBySp() {
 ////////////////////////
 
 startBtn.addEventListener('click', function startGame() {
-    let locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
     let allRats = rats.length
+    document.getElementById('cust-container').style.display = 'none';
+    document.getElementById('game-container').style.display = '';
+    ratBox = document.getElementById('rat-stats')
     for (i = 0; i < allRats; i++) {
-        rats[i].location = locations[Math.floor(Math.random() * locations.length)]
-        console.log(`${rats[i].name} in the ${rats[i].location}`)
-    }
+        ratBox.innerHTML+= `
+        <div class="rat-status">
+            <h4>${rats[i].name}</h4>
+            <p class="stat">ferocity: <span class="stat-value">${rats[i].ferocity}</span></p>
+            <p class="stat">wit: <span class="stat-value">${rats[i].wit}</span></p>
+            <p class="stat">speed: <span class="stat-value">${rats[i].speed}</span></p>
+            <p class="stat">affection: <span class="stat-value">${rats[i].affection}</span></p>
+            <p class="stat">In <span class="stat-value">${rats[i].location}</span></p>
+        </div> 
+        `
+    } 
     playRound()
 })
 
-function startGame() {
-    let locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
-    let allRats = rats.length
-    for (i = 0; i < allRats; i++) {
-        rats[i].location = locations[Math.floor(Math.random() * locations.length)]
-        console.log(`${rats[i].name} in the ${rats[i].location}`)
-    }
-    playRound()
-}
 
 const playRound = currentRound()
 function currentRound() {
     let round = 1
     return () => {
+        textBox.innerHTML += `<h3>Round ${round}</h3>`
         console.log(`round: ${round}`)
         let x = `Round ${round}`
         // addToPlot(x, '') // add method for Round display later
@@ -248,7 +265,7 @@ function currentRound() {
         }
         round++
         let plotArr = addToPlot()
-        readPlots = setInterval(plotReader(plotArr), 2000)
+        readPlots = setInterval(plotReader(plotArr), 4300)
     }
 }
 
@@ -316,8 +333,6 @@ function ratTurnDay(protagRat) {
             break;
     }
 }
-
-
 
 
 

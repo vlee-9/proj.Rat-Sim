@@ -38,7 +38,8 @@ body {
 .att-box,
 .rat-array-box,
 .rat,
-.text-container {
+.text-container,
+.rat-status-box {
     display: flex;
     font-family: Arial,sans-serif;
 }
@@ -104,14 +105,17 @@ body {
     color: #8ed;
 }
 
-.rat-array-box{
+.rat-array-box,
+.rat-status-box{
+    max-width:600px ;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
     flex-wrap: wrap;
 }
 
-.rat {
+.rat,
+.rat-status {
     flex-direction: column;
     justify-content: space-around;
     border: #8ed solid 2px;
@@ -122,13 +126,12 @@ body {
     margin: 10px;
 }
 
-.rat h4 {
+
+.rat h4,
+.rat-status h4 {
     text-decoration: underline;
 }
 
-.stat{
-    width: 100%;
-}
 .stat-value{
     color: #4ba;
 }
@@ -151,3 +154,4 @@ body {
     border: dotted 2px #fff;
     color: #f11;
 }
+
