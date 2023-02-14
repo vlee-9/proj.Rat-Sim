@@ -28,7 +28,8 @@ body {
     border-top: solid 3px #4ba;
 }
 
-.cust-container {
+.cust-container,
+.game-container {
     margin-top: 75px;
     text-align: center;
 }
@@ -36,12 +37,14 @@ body {
 .cust-box,
 .att-box,
 .rat-array-box,
-.rat {
+.rat,
+.text-container {
     display: flex;
     font-family: Arial,sans-serif;
 }
 
-.cust-box {
+.cust-box,
+.text-container {
     flex-direction: column;
     justify-content: center;
     border: double 4px #fde;
