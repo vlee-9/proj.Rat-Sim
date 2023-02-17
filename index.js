@@ -1,3 +1,5 @@
+const ratCustIcon = document.getElementById("cust-rat-icon")
+
 const feroDown = document.getElementById("att-fe-down")
 const feroUp = document.getElementById("att-fe-up")
 const feroAtt = document.getElementById("att-fe")
@@ -32,11 +34,25 @@ gameContainer.style.display = 'none'
 const textBox = document.getElementById('text-box')
 
 let rats = []
-
+let ratIcon = 1
 for (i = 0; i < attBtn.length; i++) {
     let x = attBtn[i].id
+    
     attBtn[i].addEventListener('click', () => {
         switch (x) {
+            case 'icon-btn-down':
+                ratIcon--
+                console.log(ratIcon)
+                ratIcon <= 0 ? ratIcon = 22: '';
+                
+                ratCustIcon.src = `rat-img/rat-${ratIcon}.gif`
+                break;
+            case 'icon-btn-up':
+                ratIcon++
+                ratIcon > 22 ? ratIcon = 1: '';
+                console.log(ratIcon)
+                ratCustIcon.src = `rat-img/rat-${ratIcon}.gif`
+                break;
             case 'att-fe-down':
                 if (feroAtt.textContent > 1) {
                     feroAtt.textContent--
@@ -115,6 +131,7 @@ addRatBtn.addEventListener('click', () => {
         const locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
     
         newRat.name = ratNameInput.value
+        newRat.icon = ratIcon
         newRat.ferocity = parseInt(feroAtt.textContent)
         newRat.wit = parseInt(witAtt.textContent)
         newRat.speed = parseInt(speedAtt.textContent)
@@ -144,6 +161,7 @@ function ratRandomizer() {
     const locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
     let newRat = {
         name: names[Math.floor(Math.random() * names.length)],
+        icon: Math.floor(Math.random() * 22),
         ferocity: 1,
         wit: 1,
         speed: 1,
@@ -189,6 +207,7 @@ function addToRatDisplay(newrat) {
     ratDisplayTray.innerHTML += `
         <div class="rat">
             <h4>${newrat.name}</h4>
+            <img class="rat-tray-icon" src="rat-img/rat-${newrat.icon}.gif" alt="${newrat.name}">
             <p class="stat">ferocity: <span class="stat-value">${newrat.ferocity}</span></p>
             <p class="stat">wit: <span class="stat-value">${newrat.wit}</span></p>
             <p class="stat">speed: <span class="stat-value">${newrat.speed}</span></p>
@@ -240,6 +259,7 @@ startBtn.addEventListener('click', function startGame() {
         ratBox.innerHTML+= `
         <div class="rat-status">
             <h4>${rats[i].name}</h4>
+            <img class="rat-tray-icon" src="rat-img/rat-${rats[i].icon}.gif" alt="${rats[i].name}">
             <p class="stat">ferocity: <span class="stat-value">${rats[i].ferocity}</span></p>
             <p class="stat">wit: <span class="stat-value">${rats[i].wit}</span></p>
             <p class="stat">speed: <span class="stat-value">${rats[i].speed}</span></p>
