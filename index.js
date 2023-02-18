@@ -36,7 +36,7 @@ const ratBox = document.getElementById('rat-stats')
 const quiteBtn = document.getElementById("quit-btn")
 
 startBtn.style.display = 'none'
-roundStart.style.display = 'none'
+roundStart.style.visibility = 'hidden'
 gameContainer.style.display = 'none'
 
 let rats = []
@@ -286,8 +286,8 @@ function currentRound() {
     let round = 1
     return (command) => {
         if (command == 'start') {
-            roundStart.style.display = 'none'
-            textBox.innerHTML += `<h3>Round ${round}</h3>`
+            roundStart.style.visibility = 'hidden'
+            textBox.innerHTML += `<h3 class="round-num">Round ${round}</h3>`
             console.log(`round: ${round}`)
             let x = `Round ${round}`
             // addToPlot(x, '') // add method for Round display later
@@ -296,7 +296,7 @@ function currentRound() {
             }
             round++
             let plotArr = addToPlot()
-            readPlots = setInterval(plotReader(plotArr), 4300)
+            readPlots = setInterval(plotReader(plotArr), 3000)
         }
         else if (command == 'clear') {
             round = 1
@@ -329,13 +329,16 @@ function plotReader(plotArr) {
     let plotpoint = 0
     console.log(toRead.length)
     return () => {
-        textBox.innerHTML += toRead[plotpoint].text
+        textBox.innerHTML += `<section class="text-section">
+            ${toRead[plotpoint].text}
+            </section>
+        `
         eval(toRead[plotpoint].method)
         plotpoint++
         if (plotpoint >= toRead.length) {
             clearInterval(readPlots)
             addToPlot('clear') //clears plotpoints array for new round
-            roundStart.style.display = ''
+            roundStart.style.visibility = 'visible'
         }
     }
 }
@@ -349,21 +352,27 @@ function ratTurnDay(protagRat) {
     let x = motives[Math.floor(Math.random() * motives.length)]
     switch (x) {
         case 'hungry':
-            txt = `<p><b>${protagRat.name}</b> is hungry</p>`
+            txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                <p><b>${protagRat.name}</b> is hungry</p>
+            `
             mthd = `${protagRat.ratID}.condition = 'hungry'
                 console.log(${protagRat.ratID}.condition)
             `
             addToPlot(txt, mthd)
             break;
         case 'moving':
-            txt = `<p><b>${protagRat.name}</b> is moving</p>`
+            txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                <p><b>${protagRat.name}</b> is moving</p>
+            `
             mthd = `${protagRat.ratID}.condition = 'moving'
                 console.log(${protagRat.ratID}.condition)
             `
             addToPlot(txt, mthd)
             break;
         case 'lonely':
-            txt = `<p><b>${protagRat.name}</b> is lonely</p>`
+            txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                <p><b>${protagRat.name}</b> is lonely</p>
+            `
             mthd = `${protagRat.ratID}.condition = 'lonely'
                 console.log(${protagRat.ratID}.condition)
             `
@@ -380,7 +389,7 @@ quiteBtn.addEventListener('click', resetAll = () => {
     ratBox.innerHTML = ''
     textBox.innerHTML = ''
     startBtn.style.display = 'none'
-    roundStart.style.display = 'none'
+    roundStart.style.visibility = 'hidden'
     rats = []
     ratIcon = 1
     ratCustIcon.src = `rat-img/rat-${ratIcon}.gif`
@@ -388,28 +397,3 @@ quiteBtn.addEventListener('click', resetAll = () => {
     addToPlot('clear')
     playRound('clear')
 })
-
-
-
-/* //test code below
-//example of 'rats'
-let obj = [{ name: 'clary', ID: 'obj[0]' }, { name: 'henry', ID: 'obj[01]' }]
-//example of event array to be read
-let testarr = []
-
-//test function for event maker that stores plotpoints and correponding method objects in testarr
-testFunc()
-
-//the plot point is read and 'eval()' to use method stored in event array
-console.log(testarr[0].plotpoint)
-eval(testarr[0].method)
-console.log(obj[0].condition)
-
-//example of plot point added to event array
-function testFunc() {
-    let x = {}
-    x.plotpoint = `${obj[0].name} is out of food`
-    x.method = `${obj[0].ID}.condition = 'starved'`
-    testarr.push(x)
-}
-*/
