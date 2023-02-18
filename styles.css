@@ -17,6 +17,7 @@ body {
 .btn-basic {
     margin: 5px;
     background-color: #8ed;
+    color: #000;
     border: none;
     padding: 6px 10px;
     font-weight: bold;
@@ -30,8 +31,11 @@ body {
 
 .cust-container,
 .game-container {
+    margin: auto;
     margin-top: 75px;
     text-align: center;
+    position: relative;
+    max-width: 700px;
 }
 
 .cust-box,
@@ -155,6 +159,7 @@ body {
 
 .rat img,
 .rat-status img {
+    border: #8ed dotted 1px;
     margin: auto;
     width: 30px;
 }
@@ -163,7 +168,7 @@ body {
     color: #4ba;
 }
 
-.kill-btn {
+.btn-subtle {
     width: 36px;
     padding: 2px 9px;
     margin: 2px auto;
@@ -172,13 +177,21 @@ body {
     color: #666;
 }
 
-.kill-btn:hover,
-.kill-btn:focus{
+.btn-subtle:hover,
+.btn-subtle:focus{
     border: dotted 2px #f11;
     color: #fff;
 }
-.kill-btn:active {
+.btn-subtle:active {
     border: dotted 2px #fff;
     color: #f11;
 }
 
+#quit-btn {
+    width: 50px;
+    height: 30px;
+    position: absolute;
+    bottom: 100%;
+    top: 0;
+    left: 0;
+}

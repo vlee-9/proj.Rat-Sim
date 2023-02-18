@@ -25,31 +25,37 @@ const killRatBtn = document.getElementsByClassName("kill-btn")
 const ratNameInput = document.getElementById("rat-name")
 
 const startBtn = document.getElementById('start-btn')
-startBtn.style.display = 'none'
 const roundStart = document.getElementById('round-btn')
+
 
 const custContainer = document.getElementById('cust-container')
 const gameContainer = document.getElementById('game-container')
-gameContainer.style.display = 'none'
+
 const textBox = document.getElementById('text-box')
+const ratBox = document.getElementById('rat-stats')
+const quiteBtn = document.getElementById("quit-btn")
+
+startBtn.style.display = 'none'
+roundStart.style.display = 'none'
+gameContainer.style.display = 'none'
 
 let rats = []
 let ratIcon = 1
 for (i = 0; i < attBtn.length; i++) {
     let x = attBtn[i].id
-    
+
     attBtn[i].addEventListener('click', () => {
         switch (x) {
             case 'icon-btn-down':
                 ratIcon--
                 console.log(ratIcon)
-                ratIcon <= 0 ? ratIcon = 22: '';
-                
+                ratIcon <= 0 ? ratIcon = 22 : '';
+
                 ratCustIcon.src = `rat-img/rat-${ratIcon}.gif`
                 break;
             case 'icon-btn-up':
                 ratIcon++
-                ratIcon > 22 ? ratIcon = 1: '';
+                ratIcon > 22 ? ratIcon = 1 : '';
                 console.log(ratIcon)
                 ratCustIcon.src = `rat-img/rat-${ratIcon}.gif`
                 break;
@@ -107,7 +113,7 @@ for (i = 0; i < attBtn.length; i++) {
     })
 }
 
-addRatBtn.addEventListener('click', () => {
+addRatBtn.addEventListener('click', addRat = () => {
     let atts = parseInt(feroAtt.textContent) + parseInt(witAtt.textContent) + parseInt(speedAtt.textContent) + parseInt(affectAtt.textContent)
     console.log(atts)
 
@@ -129,7 +135,7 @@ addRatBtn.addEventListener('click', () => {
 
         let newRat = {}
         const locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
-    
+
         newRat.name = ratNameInput.value
         newRat.icon = ratIcon
         newRat.ferocity = parseInt(feroAtt.textContent)
@@ -161,12 +167,12 @@ function ratRandomizer() {
     const locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
     let newRat = {
         name: names[Math.floor(Math.random() * names.length)],
-        icon: Math.floor(Math.random() * 22),
+        icon: Math.ceil(Math.random() * 21),
         ferocity: 1,
         wit: 1,
         speed: 1,
         affection: 1,
-        condition:'',
+        condition: '',
         location: locations[Math.floor(Math.random() * locations.length)]
     }
     for (i = 1; i <= 16; i++) {
@@ -212,7 +218,7 @@ function addToRatDisplay(newrat) {
             <p class="stat">wit: <span class="stat-value">${newrat.wit}</span></p>
             <p class="stat">speed: <span class="stat-value">${newrat.speed}</span></p>
             <p class="stat">affection: <span class="stat-value">${newrat.affection}</span></p>
-            <button class="kill-btn" id="${newrat.name}">kill</button>
+            <button class="kill-btn btn-subtle" id="${newrat.name}">kill</button>
         </div> 
     `
 
@@ -227,7 +233,7 @@ function addToRatDisplay(newrat) {
             assignRatID()
         })
     }
-    if(rats.length >= 4){
+    if (rats.length >= 4) {
         startBtn.style.display = ''
     }
 
@@ -254,9 +260,8 @@ startBtn.addEventListener('click', function startGame() {
     let allRats = rats.length
     document.getElementById('cust-container').style.display = 'none';
     document.getElementById('game-container').style.display = '';
-    ratBox = document.getElementById('rat-stats')
     for (i = 0; i < allRats; i++) {
-        ratBox.innerHTML+= `
+        ratBox.innerHTML += `
         <div class="rat-status">
             <h4>${rats[i].name}</h4>
             <img class="rat-tray-icon" src="rat-img/rat-${rats[i].icon}.gif" alt="${rats[i].name}">
@@ -267,25 +272,35 @@ startBtn.addEventListener('click', function startGame() {
             <p class="stat">In <span class="stat-value">${rats[i].location}</span></p>
         </div> 
         `
-    } 
-    playRound()
+    }
+    playRound('start')
+})
+
+roundStart.addEventListener('click', () => {
+    playRound('start')
 })
 
 
 const playRound = currentRound()
 function currentRound() {
     let round = 1
-    return () => {
-        textBox.innerHTML += `<h3>Round ${round}</h3>`
-        console.log(`round: ${round}`)
-        let x = `Round ${round}`
-        // addToPlot(x, '') // add method for Round display later
-        for (i = 0; i < rats.length; i++) {
-            ratTurnDay(rats[i])
+    return (command) => {
+        if (command == 'start') {
+            roundStart.style.display = 'none'
+            textBox.innerHTML += `<h3>Round ${round}</h3>`
+            console.log(`round: ${round}`)
+            let x = `Round ${round}`
+            // addToPlot(x, '') // add method for Round display later
+            for (i = 0; i < rats.length; i++) {
+                ratTurnDay(rats[i])
+            }
+            round++
+            let plotArr = addToPlot()
+            readPlots = setInterval(plotReader(plotArr), 4300)
         }
-        round++
-        let plotArr = addToPlot()
-        readPlots = setInterval(plotReader(plotArr), 4300)
+        else if (command == 'clear') {
+            round = 1
+        }
     }
 }
 
@@ -320,12 +335,15 @@ function plotReader(plotArr) {
         if (plotpoint >= toRead.length) {
             clearInterval(readPlots)
             addToPlot('clear') //clears plotpoints array for new round
+            roundStart.style.display = ''
         }
     }
 }
 
 
-//RAT TURN//
+
+
+// RAT TURN //
 function ratTurnDay(protagRat) {
     let motives = ['hungry', 'moving', 'lonely'] //motive()
     let x = motives[Math.floor(Math.random() * motives.length)]
@@ -354,6 +372,22 @@ function ratTurnDay(protagRat) {
     }
 }
 
+quiteBtn.addEventListener('click', resetAll = () => {
+    document.getElementById('cust-container').style.display = '';
+    document.getElementById('game-container').style.display = 'none';
+
+    ratDisplayTray.innerHTML = ''
+    ratBox.innerHTML = ''
+    textBox.innerHTML = ''
+    startBtn.style.display = 'none'
+    roundStart.style.display = 'none'
+    rats = []
+    ratIcon = 1
+    ratCustIcon.src = `rat-img/rat-${ratIcon}.gif`
+    clearInterval(readPlots)
+    addToPlot('clear')
+    playRound('clear')
+})
 
 
 
