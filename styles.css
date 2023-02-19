@@ -222,3 +222,11 @@ body {
     top: 0;
     left: 0;
 }
+
+.rat-dead {
+    border: #f11 dotted 2px;
+}
+
+.dead-icon {
+    filter: grayscale(90%)
+}

@@ -20,6 +20,7 @@ const attTotal = document.getElementById("att-total")
 const attBtn = document.getElementsByClassName("att-btn")
 
 const addRatBtn = document.getElementById("add-rat")
+const randomRatBtn = document.getElementById("random-rat")
 const ratError = document.getElementById("error-message")
 const killRatBtn = document.getElementsByClassName("kill-btn")
 const ratNameInput = document.getElementById("rat-name")
@@ -144,6 +145,8 @@ addRatBtn.addEventListener('click', addRat = () => {
         newRat.affection = parseInt(affectAtt.textContent)
         newRat.hunger = 3
         newRat.condition = ''
+        newRat.isAlive = true
+        newRat.hasFood = false
         newRat.location = locations[Math.floor(Math.random() * locations.length)]
         rats.push(newRat)
         addToRatDisplay(newRat)
@@ -162,7 +165,7 @@ addRatBtn.addEventListener('click', addRat = () => {
 
 const ratDisplayTray = document.getElementById("rat-tray")
 
-function ratRandomizer() {
+randomRatBtn.addEventListener('click', function ratRandomizer() {
     const names = ["Jogun", "Misser", "Loosh", "Patten", "Lop", "Bóck", "Björn", "lithete", "Ulmm", "Olmaes", "Aptat", "Abby", "Jake", "Tom", "Aless", "Alice", "Tread", "Red", "Holly", "Sister", "Marge", "Kapuy", "Illum", "Ill", "Robin", "Royce", "Jacette", "Lord", "General", "Furry", "Wolf", "Bun-Bun", "Frogert", "Alpine"]
     const locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
     let newRat = {
@@ -172,7 +175,10 @@ function ratRandomizer() {
         wit: 1,
         speed: 1,
         affection: 1,
+        hunger: 3,
         condition: '',
+        isAlive: true,
+        hasFood: false,
         location: locations[Math.floor(Math.random() * locations.length)]
     }
     for (i = 1; i <= 16; i++) {
@@ -207,7 +213,7 @@ function ratRandomizer() {
         addToRatDisplay(newRat)
         ratError.style.display = 'none';
     }
-}
+})
 
 function addToRatDisplay(newrat) {
     ratDisplayTray.innerHTML += `
@@ -231,6 +237,8 @@ function addToRatDisplay(newrat) {
             ratElement.remove()
 
             assignRatID()
+            //removes start btn when < 4 rats
+            rats.length < 4 ? startBtn.style.display = 'none': ''
         })
     }
     if (rats.length >= 4) {
@@ -257,28 +265,48 @@ function sortRatBySp() {
 ////////////////////////
 
 startBtn.addEventListener('click', function startGame() {
-    let allRats = rats.length
+
     document.getElementById('cust-container').style.display = 'none';
     document.getElementById('game-container').style.display = '';
-    for (i = 0; i < allRats; i++) {
-        ratBox.innerHTML += `
-        <div class="rat-status">
-            <h4>${rats[i].name}</h4>
-            <img class="rat-tray-icon" src="rat-img/rat-${rats[i].icon}.gif" alt="${rats[i].name}">
-            <p class="stat">ferocity: <span class="stat-value">${rats[i].ferocity}</span></p>
-            <p class="stat">wit: <span class="stat-value">${rats[i].wit}</span></p>
-            <p class="stat">speed: <span class="stat-value">${rats[i].speed}</span></p>
-            <p class="stat">affection: <span class="stat-value">${rats[i].affection}</span></p>
-            <p class="stat">In <span class="stat-value">${rats[i].location}</span></p>
-        </div> 
-        `
-    }
+    updateRatDisplay()
     playRound('start')
 })
 
 roundStart.addEventListener('click', () => {
     playRound('start')
 })
+
+function updateRatDisplay() {
+    let allRats = rats.length
+    ratBox.innerHTML = ''
+    for (i = 0; i < allRats; i++) {
+        if (rats[i].isAlive) {
+            ratBox.innerHTML += `
+            <div class="rat-status">
+                <h4>${rats[i].name}</h4>
+                <img class="rat-tray-icon" src="rat-img/rat-${rats[i].icon}.gif" alt="${rats[i].name}">
+                <p class="stat">ferocity: <span class="stat-value">${rats[i].ferocity}</span></p>
+                <p class="stat">wit: <span class="stat-value">${rats[i].wit}</span></p>
+                <p class="stat">speed: <span class="stat-value">${rats[i].speed}</span></p>
+                <p class="stat">affection: <span class="stat-value">${rats[i].affection}</span></p>
+                <p class="stat">In <span class="stat-value">${rats[i].location}</span></p>
+                <p class="stat">Hunger: <span class="stat-value">${rats[i].hunger}</span></p>
+            </div>`
+        }
+        else if (rats[i].isAlive == false) {
+            ratBox.innerHTML += `
+            <div class="rat-status rat-dead">
+                <h4>${rats[i].name}</h4>
+                <img class="rat-tray-icon dead-icon" src="rat-img/rat-${rats[i].icon}.gif" alt="${rats[i].name}">
+                <p class="stat">ferocity: <span class="stat-value">${rats[i].ferocity}</span></p>
+                <p class="stat">wit: <span class="stat-value">${rats[i].wit}</span></p>
+                <p class="stat">speed: <span class="stat-value">${rats[i].speed}</span></p>
+                <p class="stat">affection: <span class="stat-value">${rats[i].affection}</span></p>
+                <p class="stat"><b>DEAD</b></p>
+            </div>`
+        }
+    }
+}
 
 
 const playRound = currentRound()
@@ -289,11 +317,12 @@ function currentRound() {
             roundStart.style.visibility = 'hidden'
             textBox.innerHTML += `<h3 class="round-num">Round ${round}</h3>`
             console.log(`round: ${round}`)
-            let x = `Round ${round}`
-            // addToPlot(x, '') // add method for Round display later
-            for (i = 0; i < rats.length; i++) {
-                ratTurnDay(rats[i])
+
+            let allRats = rats.length
+            for (i = 0; i < allRats; i++) {
+                rats[i].isAlive == true ? ratTurnDay(rats[i]) : '';
             }
+
             round++
             let plotArr = addToPlot()
             readPlots = setInterval(plotReader(plotArr), 3000)
@@ -303,7 +332,6 @@ function currentRound() {
         }
     }
 }
-
 
 //PLOTPOINT AND METHOD KEEPER//
 const addToPlot = plotKeeper()
@@ -338,7 +366,9 @@ function plotReader(plotArr) {
         if (plotpoint >= toRead.length) {
             clearInterval(readPlots)
             addToPlot('clear') //clears plotpoints array for new round
-            roundStart.style.visibility = 'visible'
+
+            //temporary block for all dead rats
+            rats.map(obj => obj.isAlive).includes(true) ? roundStart.style.visibility = 'visible': ''; 
         }
     }
 }
@@ -352,8 +382,9 @@ function ratTurnDay(protagRat) {
     let x = motives[Math.floor(Math.random() * motives.length)]
     switch (x) {
         case 'hungry':
-            txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
-                <p><b>${protagRat.name}</b> is hungry</p>
+            txt = `
+            <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+            <p><b>${protagRat.name}</b> is hungry</p>
             `
             mthd = `${protagRat.ratID}.condition = 'hungry'
                 console.log(${protagRat.ratID}.condition)
@@ -361,8 +392,9 @@ function ratTurnDay(protagRat) {
             addToPlot(txt, mthd)
             break;
         case 'moving':
-            txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
-                <p><b>${protagRat.name}</b> is moving</p>
+            txt = `
+            <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+            <p><b>${protagRat.name}</b> is moving</p>
             `
             mthd = `${protagRat.ratID}.condition = 'moving'
                 console.log(${protagRat.ratID}.condition)
@@ -370,11 +402,16 @@ function ratTurnDay(protagRat) {
             addToPlot(txt, mthd)
             break;
         case 'lonely':
-            txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
-                <p><b>${protagRat.name}</b> is lonely</p>
+            txt = `
+            <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+            <p><b>${protagRat.name}</b> is lonely. They die of lonliness</p>
             `
-            mthd = `${protagRat.ratID}.condition = 'lonely'
+            mthd = `
+                ${protagRat.ratID}.condition = 'lonely'
+                ${protagRat.ratID}.isAlive = false
+                updateRatDisplay()
                 console.log(${protagRat.ratID}.condition)
+                console.log(${protagRat.ratID}.isAlive)
             `
             addToPlot(txt, mthd)
             break;
