@@ -238,7 +238,7 @@ function addToRatDisplay(newrat) {
 
             assignRatID()
             //removes start btn when < 4 rats
-            rats.length < 4 ? startBtn.style.display = 'none': ''
+            rats.length < 4 ? startBtn.style.display = 'none' : ''
         })
     }
     if (rats.length >= 4) {
@@ -318,13 +318,14 @@ function currentRound() {
             textBox.innerHTML += `<h3 class="round-num">Round ${round}</h3>`
             console.log(`round: ${round}`)
 
-            let allRats = rats.length
-            for (i = 0; i < allRats; i++) {
+            const allRats = rats.length
+            for (let i = 0; i < allRats; i++) {
                 rats[i].isAlive == true ? ratTurnDay(rats[i]) : '';
             }
 
             round++
             let plotArr = addToPlot()
+            // console.log(plotArr)
             readPlots = setInterval(plotReader(plotArr), 3000)
         }
         else if (command == 'clear') {
@@ -333,7 +334,7 @@ function currentRound() {
     }
 }
 
-//PLOTPOINT AND METHOD KEEPER//
+//PLOTPOINT AND METHOD KEEPER AND READER//
 const addToPlot = plotKeeper()
 function plotKeeper() {
     let plotpoints = []
@@ -366,40 +367,22 @@ function plotReader(plotArr) {
         if (plotpoint >= toRead.length) {
             clearInterval(readPlots)
             addToPlot('clear') //clears plotpoints array for new round
-
+            // console.log(toRead)
             //temporary block for all dead rats
-            rats.map(obj => obj.isAlive).includes(true) ? roundStart.style.visibility = 'visible': ''; 
+            rats.map(obj => obj.isAlive).includes(true) ? roundStart.style.visibility = 'visible' : '';
         }
     }
 }
 
-
-
-
 // RAT TURN //
 function ratTurnDay(protagRat) {
-    let motives = ['hungry', 'moving', 'lonely'] //motive()
-    let x = motives[Math.floor(Math.random() * motives.length)]
+    let x = events.motive()
     switch (x) {
         case 'hungry':
-            txt = `
-            <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
-            <p><b>${protagRat.name}</b> is hungry</p>
-            `
-            mthd = `${protagRat.ratID}.condition = 'hungry'
-                console.log(${protagRat.ratID}.condition)
-            `
-            addToPlot(txt, mthd)
+            events.hunger.hungerPart1(protagRat)
             break;
         case 'moving':
-            txt = `
-            <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
-            <p><b>${protagRat.name}</b> is moving</p>
-            `
-            mthd = `${protagRat.ratID}.condition = 'moving'
-                console.log(${protagRat.ratID}.condition)
-            `
-            addToPlot(txt, mthd)
+            events.moving.movingPart1(protagRat)
             break;
         case 'lonely':
             txt = `
@@ -415,6 +398,79 @@ function ratTurnDay(protagRat) {
             `
             addToPlot(txt, mthd)
             break;
+    }
+}
+
+// GAME EVENTS //
+
+const events = {
+    motive: () => {
+        let motives = ['hungry', 'moving', 'lonely']
+        let x = motives[Math.floor(Math.random() * motives.length)]
+        return x
+    },
+
+    foodChance: (protagRat) => {
+        let x = 10 - protagRat.wit
+        let y = []
+        for (let i = 0; i < protagRat.wit; i++) {
+            y.push(1)
+        }
+        for (let i = 0; i < x; i++) {
+            y.push(0)
+        }
+        let z = y[Math.floor(Math.random() * y.length)]
+        return z
+
+    },
+
+    hunger: {
+        hungerPart1: (protagRat) => {
+            txt = `
+                <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                <p><b>${protagRat.name}</b> is looking for food..</p>
+            `
+            mthd = `
+                console.log(${protagRat.ratID}.hunger)
+            `
+            addToPlot(txt, mthd)
+            events.hunger.hungerPart2(protagRat)
+        },
+        hungerPart2: (protagRat) => {
+            let foodFound = events.foodChance(protagRat)
+            if (foodFound) {
+                txt = `
+                    <p>They dig around and find some scraps to eat!</p>
+                `
+                mthd = `
+                    ${protagRat.ratID}.hasFood = true
+                `
+                addToPlot(txt, mthd)
+            }
+            else if (foodFound == false) {
+                txt = `
+                    <p>They dig around and find nothing</p>
+                `
+                mthd = `
+                    ${protagRat.ratID}.hasFood = false
+                `
+                addToPlot(txt, mthd)
+            }
+
+        }
+    },
+
+    moving: {
+        movingPart1: (protagRat) => {
+            txt = `
+                <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                <p><b>${protagRat.name}</b> is moving</p>
+            `
+            mthd = `
+                console.log(${protagRat.ratID}.location)
+            `
+            addToPlot(txt, mthd)
+        }
     }
 }
 
