@@ -145,9 +145,13 @@ body {
 }
 .text-section {
     margin-bottom: 7px;
-    padding-left: 30px;
+    padding: 0 30px;
     justify-content: flex-start;
     align-items: center;
+}
+
+.text-section p {
+    text-align: left;;
 }
 
 
