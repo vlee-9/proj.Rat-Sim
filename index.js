@@ -41,7 +41,7 @@ roundStart.style.visibility = 'hidden'
 gameContainer.style.display = 'none'
 
 let rats = []
-let ratsDis =[]
+let ratsDis = []
 let ratIcon = 1
 for (i = 0; i < attBtn.length; i++) {
     let x = attBtn[i].id
@@ -253,7 +253,6 @@ function addToRatDisplay(newrat) {
     assignRatID()
 }
 
-// assigns and reassigns RatID based on place in array
 function assignRatID() {
     for (i = 0; i < rats.length; i++) {
         rats[i].ratID = `rats[${i}]`
@@ -261,7 +260,7 @@ function assignRatID() {
         ratsDis[i].ratID = `ratsDis[${i}]`
     }
 }
-// sorts rat based on speed
+
 function sortRatBySp() {
     rats.sort((rat1, rat2) => (rat1.speed > rat2.speed ? -1 : 1))
     ratsDis.sort((rat1, rat2) => (rat1.speed > rat2.speed ? -1 : 1))
@@ -281,12 +280,12 @@ function copyRat(ratObj) {
     ratCopy.isAlive = ratObj.isAlive
     ratCopy.hasFood = ratObj.hasFood
     ratCopy.location = ratObj.location
-    
+
     return ratCopy
 }
 
 ////////////////////////
-//GAME START TEST CODE//
+//     GAME START!    //
 ////////////////////////
 
 startBtn.addEventListener('click', function startGame() {
@@ -307,7 +306,7 @@ function updateRatDisplay() {
     for (i = 0; i < allRats; i++) {
         if (ratsDis[i].isAlive) {
             ratBox.innerHTML += `
-            <div class="rat-status">
+            <div class="rat-status ${ratsDis[i].condition}">
                 <h4>${ratsDis[i].name}</h4>
                 <img class="rat-tray-icon" src="rat-img/rat-${ratsDis[i].icon}.gif" alt="${ratsDis[i].name}">
                 <p class="stat">ferocity: <span class="stat-value">${ratsDis[i].ferocity}</span></p>
@@ -346,7 +345,7 @@ function currentRound() {
 
             const allRats = rats.length
             for (let i = 0; i < allRats; i++) {
-                rats[i].isAlive == true ? ratTurnDay(rats[i],ratsDis[i]) : '';
+                rats[i].isAlive == true ? ratTurnDay(rats[i], ratsDis[i]) : '';
             }
 
             round++
@@ -401,7 +400,7 @@ function plotReader(plotArr) {
 
 // RAT TURN //
 function ratTurnDay(protagRat, protagCopy) {
-    let x = events.motive()
+    let x = events.motive(protagRat)
     switch (x) {
         case 'hungry':
             events.hunger.hungerPart1(protagRat, protagCopy)
@@ -424,15 +423,16 @@ function ratTurnDay(protagRat, protagCopy) {
             addToPlot(txt, mthd)
 
             protagRat.isAlive = false
-        break;
+            break;
     }
 }
 
 // GAME EVENTS //
 
 const events = {
-    motive: () => {
-        let motives = ['hungry', 'moving','lonely']
+    motive: (protagRat) => {
+        let motives = ['hungry', 'moving']
+        protagRat.hasFood = true ? motives.filter(x => x !== 'hungry'): '';
         let x = motives[Math.floor(Math.random() * motives.length)]
         return x
     },
@@ -459,10 +459,10 @@ const events = {
             `
             mthd = true
             addToPlot(txt, mthd)
-            if(protagRat.ferocity >= 5 && protagRat.affection <= 4){
+            if (protagRat.ferocity >= 5 && protagRat.affection <= 4) {
                 events.hunger.hungerPart3(protagRat, protagCopy)
             }
-            else{events.hunger.hungerPart2(protagRat,protagCopy)}
+            else { events.hunger.hungerPart2(protagRat, protagCopy) }
         },
         ///////
         hungerPart2: (protagRat, protagCopy) => {
@@ -492,9 +492,9 @@ const events = {
         ///////
         hungerPart3: (protagRat, protagCopy) => {
             let localRats = rats.filter(obj => obj.location == protagRat.location).filter(obj => obj.ratID !== protagRat.ratID).filter(obj => obj.isAlive)
-            if(localRats[0]){
-                
-                let antagRat = localRats[Math.floor(Math.random()*localRats.length)]
+            if (localRats[0]) {
+
+                let antagRat = localRats[Math.floor(Math.random() * localRats.length)]
                 let antagCopy = ratsDis[antagRat.num]
 
                 txt = `
@@ -503,27 +503,27 @@ const events = {
                 mthd = true
                 addToPlot(txt, mthd)
 
-                if(protagRat.ferocity >= antagRat.ferocity){
+                if (protagRat.ferocity >= antagRat.ferocity) {
                     txt = `
                         <p><b>${protagRat.name}</b> bites some flesh out of <b>${antagRat.name}</b>!</p>
                     `
                     mthd = true
                     addToPlot(txt, mthd)
 
-                    if(antagRat.condition == 'wounded'){
+                    if (antagRat.condition == 'wounded') {
                         txt = `
                         <img class="text-icon" src="rat-img/rat-${antagRat.icon}.gif" alt="${antagRat.name}">
-                        <p><b>${antagRat.name}</b> has died..</p>
+                        <p><b>${antagRat.name}</b> dies of their wounds..</p>
                     `
-                    mthd = ` 
+                        mthd = ` 
                         ${protagCopy.ratID}.hasFood = true;
                         ${antagCopy.ratID}.isAlive = false;
                         updateRatDisplay();              
                     `
-                    addToPlot(txt, mthd)
+                        addToPlot(txt, mthd)
 
-                    protagRat.hasFood = true
-                    antagRat.isAlive = false
+                        protagRat.hasFood = true
+                        antagRat.isAlive = false
                     }
 
                     else {
@@ -541,7 +541,7 @@ const events = {
                         antagRat.condition = 'wounded'
                     }
                 }
-                else{
+                else {
                     txt = `
                         <p><b>${protagRat.name}</b> attacks <b>${antagRat.name}</b> but fails..</p>
                     `
@@ -564,13 +564,130 @@ const events = {
     },
 
     moving: {
-        movingPart1: (protagRat) => {
+        movingPart1: (protagRat, protagCopy) => {
             txt = `
                 <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
-                <p><b>${protagRat.name}</b> is moving</p>
-            `
+                <p><b>${protagRat.name}</b> is moving</p>`
             mthd = true
             addToPlot(txt, mthd)
+            if (protagRat.location == 'vents' || protagRat.speed > 7) {
+                events.moving.movingPart2(protagRat, protagCopy)
+            }
+            else {
+                protagRat.location = 'vents'
+                txt = `<p><b>${protagRat.name}</b> moved to the <b>vents</b></p>`
+
+                mthd = `${protagCopy.ratID}.location = 'vents'
+                        updateRatDisplay()`
+                addToPlot(txt, mthd)
+                
+                events.moving.movingEncounter(protagRat, protagCopy)
+            }
+        },
+
+        movingPart2: (protagRat, protagCopy) => {
+            let locations = ['Laboratory', 'Trash Pits', 'Scrap Heap', 'Burn Room', 'Storage']
+            locations.filter(x => x !== protagRat.location)
+            let newLoc = locations[Math.floor(Math.random() * locations.length)]
+
+            protagRat.location = newLoc
+
+            txt = `<p><b>${protagRat.name}</b> moves to the <b>${newLoc}</b></p>`
+            mthd = `${protagCopy.ratID}.location = '${newLoc}'
+                    updateRatDisplay()`
+            addToPlot(txt, mthd)
+
+        },
+
+        movingEncounter: (protagRat, protagCopy) => {
+            let encounter = ['trap', 'enemy']
+            let chance = Math.ceil(Math.random() * 2) 
+
+            if(chance == 1){
+                let event = encounter[Math.floor(Math.random() * 2)]
+                event == 'trap' ? events.moving.movingTrap(protagRat, protagCopy): events.moving.movingEnemy(protagRat,protagCopy);
+            }
+            else{}
+        },
+
+        movingTrap: (protagRat,protagCopy) => {
+            txt = `<p><b>${protagRat.name}</b> encounters a wad of cheese on a <b>mouse trap</b></p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            if(protagRat.wit >= 4){
+                protagRat.hasFood = true
+                txt = `<p><b>${protagRat.name}</b> swats the cheese out of the trap! Free food..</p>`
+
+                mthd = `${protagCopy.ratID}.hasFood = true`
+                addToPlot(txt, mthd)
+            }
+
+            else{
+
+                if(protagRat.condition == 'wounded'){
+                    protagRat.isAlive = false
+                    txt = `<p><b>${protagRat.name}</b> bites the cheese and the trap snaps their head!</p>`
+
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    txt = `<p><b>${protagRat.name}</b> is dead..</p>`
+
+                    mthd = `${protagCopy.ratID}.isAlive = false
+                            updateRatDisplay()`
+                    addToPlot(txt, mthd)
+                }
+
+                else {
+                    protagRat.condition = 'wounded'
+                    txt = `<p><b>${protagRat.name}</b> bites the cheese and the trap snaps their nose!</p>`
+
+                    mthd = `${protagCopy.ratID}.condition = 'wounded'
+                            updateRatDisplay()`
+                    addToPlot(txt, mthd)
+                }
+            }
+        },
+
+        movingEnemy: (protagRat, protagCopy) => {
+            txt = `<p><b>${protagRat.name}</b> encounters a <b>spider</b>!</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            if(protagRat.ferocity >= 5){
+                protagRat.hasFood = true
+                txt = `<p><b>${protagRat.name}</b> bites the spider, killing it! Free food..</p>`
+
+                mthd = `${protagCopy.ratID}.hasFood = true`
+                addToPlot(txt, mthd)
+            }
+
+            else{
+
+                if(protagRat.condition == 'wounded'){
+                    protagRat.isAlive = false
+                    txt = `<p>The spider stabs <b>${protagRat.name}</b> with its fangs!</p>`
+
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    txt = `<p><b>${protagRat.name}</b> is dead..</p>`
+
+                    mthd = `${protagCopy.ratID}.isAlive = false
+                            updateRatDisplay()`
+                    addToPlot(txt, mthd)
+                }
+
+                else{
+                    protagRat.condition = 'wounded'
+                    txt = `<p>The spider bites<b>${protagRat.name}</b>, but they live..</p>`
+
+                    mthd = `${protagCopy.ratID}.condition = 'wounded'
+                            updateRatDisplay()`
+                    addToPlot(txt, mthd)
+                }
+            }
         }
     }
 }
@@ -584,6 +701,7 @@ quiteBtn.addEventListener('click', resetAll = () => {
     textBox.innerHTML = ''
     startBtn.style.display = 'none'
     roundStart.style.visibility = 'hidden'
+    ratError.textContent = ''
     rats = []
     ratsDis = []
     ratIcon = 1

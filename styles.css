@@ -227,6 +227,10 @@ body {
     left: 0;
 }
 
+.wounded {
+    border: #ff1 dotted 2px;
+}
+
 .rat-dead {
     border: #f11 dotted 2px;
 }
