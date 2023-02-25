@@ -131,9 +131,13 @@ body {
 
 .text-container {
     overflow: hidden;
-    
     padding-bottom: 50px;
     justify-content: flex-end;
+}
+
+.scroller{
+    overflow: auto;
+    justify-content: normal;
 }
 
 .round-num {

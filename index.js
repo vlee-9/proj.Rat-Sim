@@ -298,6 +298,7 @@ startBtn.addEventListener('click', function startGame() {
 
 roundStart.addEventListener('click', () => {
     playRound('start')
+    textBox.classList.toggle('scroller')
 })
 
 function updateRatDisplay() {
@@ -394,6 +395,8 @@ function plotReader(plotArr) {
             addToPlot('clear') //clears plotpoints array for new round
             //temporary block for all dead rats
             rats.map(obj => obj.isAlive).includes(true) ? roundStart.style.visibility = 'visible' : '';
+            textBox.classList.toggle('scroller')
+            textBox.scrollTop = textBox.scrollHeight; //auto scroll to bottom
         }
     }
 }
@@ -437,36 +440,39 @@ const events = {
         return x
     },
 
-    foodChance: (protagRat) => {
-        let x = 10 - protagRat.wit
+    statChance: (stat) => {
+        let x = 10 - stat
         let y = []
-        for (let i = 0; i < protagRat.wit; i++) {
+
+        for (let i = 0; i <= stat; i++) {
             y.push(1)
         }
-        for (let i = 0; i < x; i++) {
+        for (let i = 0; i <= x; i++) {
             y.push(0)
         }
         let z = y[Math.floor(Math.random() * y.length)]
+        
         return z
 
     },
 
     hunger: {
         hungerPart1: (protagRat, protagCopy) => {
+            let chanceFerocity = events.statChance(protagRat.ferocity)
             txt = `
                 <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
                 <p><b>${protagRat.name}</b> looks for food..</p>
             `
             mthd = true
             addToPlot(txt, mthd)
-            if (protagRat.ferocity >= 5 && protagRat.affection <= 4) {
+            if (chanceFerocity && protagRat.affection <= 4) {
                 events.hunger.hungerPart3(protagRat, protagCopy)
             }
             else { events.hunger.hungerPart2(protagRat, protagCopy) }
         },
         ///////
         hungerPart2: (protagRat, protagCopy) => {
-            let foodFound = events.foodChance(protagRat)
+            let foodFound = events.statChance(protagRat.wit)
             if (foodFound) {
                 txt = `
                     <p>They dig and find some scraps!</p>
@@ -493,17 +499,18 @@ const events = {
         hungerPart3: (protagRat, protagCopy) => {
             let localRats = rats.filter(obj => obj.location == protagRat.location).filter(obj => obj.ratID !== protagRat.ratID).filter(obj => obj.isAlive)
             if (localRats[0]) {
+                let chanceFerocity = events.statChance(protagRat.ferocity)
 
                 let antagRat = localRats[Math.floor(Math.random() * localRats.length)]
                 let antagCopy = ratsDis[antagRat.num]
 
                 txt = `
-                    <p>They approach <b>${antagRat.name}</b></p>
+                    <p>They approach <b>${antagRat.name}</b> with hungry eyes</p>
                 `
                 mthd = true
                 addToPlot(txt, mthd)
 
-                if (protagRat.ferocity >= antagRat.ferocity) {
+                if (chanceFerocity && protagRat.ferocity >= antagRat.ferocity) {
                     txt = `
                         <p><b>${protagRat.name}</b> bites some flesh out of <b>${antagRat.name}</b>!</p>
                     `
@@ -611,11 +618,13 @@ const events = {
         },
 
         movingTrap: (protagRat,protagCopy) => {
+            let chanceWit = events.statChance(protagRat.wit)
+
             txt = `<p><b>${protagRat.name}</b> encounters a wad of cheese on a <b>mouse trap</b></p>`
             mthd = true
             addToPlot(txt, mthd)
 
-            if(protagRat.wit >= 4){
+            if(chanceWit){
                 protagRat.hasFood = true
                 txt = `<p><b>${protagRat.name}</b> swats the cheese out of the trap! Free food..</p>`
 
@@ -651,11 +660,13 @@ const events = {
         },
 
         movingEnemy: (protagRat, protagCopy) => {
+            let chanceFerocity = events.statChance(protagRat.ferocity)
+
             txt = `<p><b>${protagRat.name}</b> encounters a <b>spider</b>!</p>`
             mthd = true
             addToPlot(txt, mthd)
 
-            if(protagRat.ferocity >= 5){
+            if(chanceFerocity){
                 protagRat.hasFood = true
                 txt = `<p><b>${protagRat.name}</b> bites the spider, killing it! Free food..</p>`
 
@@ -681,7 +692,7 @@ const events = {
 
                 else{
                     protagRat.condition = 'wounded'
-                    txt = `<p>The spider bites<b>${protagRat.name}</b>, but they live..</p>`
+                    txt = `<p>The spider bites <b>${protagRat.name}</b>, but they live..</p>`
 
                     mthd = `${protagCopy.ratID}.condition = 'wounded'
                             updateRatDisplay()`
