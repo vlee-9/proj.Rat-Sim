@@ -203,6 +203,16 @@ body {
     color: #4ba;
 }
 
+.fine {
+    color: #6c0;
+}
+.warning {
+    color: #e94;
+}
+.danger{
+    color: #d35;
+}
+
 .btn-subtle {
     width: 36px;
     padding: 2px 9px;
