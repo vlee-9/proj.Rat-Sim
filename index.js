@@ -68,21 +68,21 @@ let locStatus = [
 
 const miscValues = {
     acts: {
-        
+
         agitatedDumb: () => {
-            let emote = ['"Grrrr.."', '"Hsssss..!"','*Stares agrily*..','@_@;','-.-;','*Claws ground nervously*']
+            let emote = ['"Grrrr.."', '"Hsssss..!"', '*Stares agrily*..', '@_@;', '-.-;', '*Claws ground nervously*']
             let choice = emote[Math.floor(Math.random() * emote.length)]
             return choice
         },
-            
-        happyDumb:() => {
-            let emote = ['"Hap! Hap!"', '*snickers*','*smiles*','"Heee!;"','*Rawr XD','*Squeek* *Squeek*', '*Jumps happily*!', '"Prrrrr..."']
+
+        happyDumb: () => {
+            let emote = ['"Hap! Hap!"', '*snickers*', '*smiles*', '"Heee!;"', '*Rawr XD', '*Squeek* *Squeek*', '*Jumps happily*!', '"Prrrrr..."']
             let choice = emote[Math.floor(Math.random() * emote.length)]
             return choice
         }
     },
 
-    enemies: {}   
+    enemies: {}
 }
 
 for (i = 0; i < attBtn.length; i++) {
@@ -352,16 +352,16 @@ function updateRatDisplay() {
     const statFunc = {
         hunger: (hungerLvl) => {
             let x
-            if(hungerLvl == 1){
+            if (hungerLvl == 1) {
                 x = `<span class="stat-value fine">full</span>`
             }
-            else if(hungerLvl == 2){
+            else if (hungerLvl == 2) {
                 x = `<span class="stat-value fine">sated</span>`
             }
-            else if (hungerLvl == 3 || hungerLvl == 4){
+            else if (hungerLvl == 3 || hungerLvl == 4) {
                 x = `<span class="stat-value warning">hungry</span>`
             }
-            else {
+            else if (hungerLvl >= 5) {
                 x = `<span class="stat-value danger">starved</span>`
             }
             return x
@@ -410,12 +410,26 @@ function currentRound() {
             const allRats = rats.length
             for (let i = 0; i < allRats; i++) {
                 rats[i].isAlive == true ? ratTurnDay(rats[i], ratsDis[i]) : '';
+
             }
+
+            let txt = `<h4 class="day-transition">Midday</h4>`
+            let mthd = true
+            addToPlot(txt, mthd)
+
+            for (let i = 0; i < allRats; i++) {
+                rats[i].isAlive == true ? ratTurnDay(rats[i], ratsDis[i]) : '';
+
+            }
+
+            txt = `<h4 class="day-transition">Nightfall</h4>`
+            mthd = true
+            addToPlot(txt, mthd)
 
             round++
             let plotArr = addToPlot()
             // console.log(plotArr)
-            readPlots = setInterval(plotReader(plotArr), 4300)
+            readPlots = setInterval(plotReader(plotArr), 2300)
         }
         else if (command == 'clear') {
             round = 1
@@ -466,7 +480,7 @@ function plotReader(plotArr) {
 
 // RAT TURN //
 function ratTurnDay(protagRat, protagCopy) {
-    let x = events.motive(protagRat)
+    let x = events.motiveDay(protagRat)
     switch (x) {
         case 'hungry':
             events.hunger.hungerPart1(protagRat, protagCopy)
@@ -485,29 +499,52 @@ function ratTurnDay(protagRat, protagCopy) {
 // GAME EVENTS //
 
 const events = {
-    motive: (protagRat) => {
+    motiveDay: (protagRat) => {
         let motives = ['hungry', 'moving', 'shelter']
-        motives = protagRat.sheltered ? motives.filter(x => x !== 'shelter'): motives;
-        motives = protagRat.sheltered ? motives.filter(x => x !== 'moving'): motives;
-        motives = protagRat.location == 'vents' ? motives.filter(x => x !== 'shelter'): motives;
-        console.log(motives)
+        motives = protagRat.hunger <= 2 ? motives.filter(x => x !== 'hungry') : motives;
+        motives = protagRat.sheltered ? motives.filter(x => x !== 'shelter') : motives;
+        motives = protagRat.sheltered ? motives.filter(x => x !== 'moving') : motives;
+        motives = protagRat.location == 'vents' ? motives.filter(x => x !== 'shelter') : motives;
+        // console.log(motives)
         let x = motives[Math.floor(Math.random() * motives.length)]
         return x
     },
 
+    motiveDay2: (protagRat) => {
+        let motives = ['hungry', 'moving', 'shelter']
+        motives = protagRat.hunger <= 2 ? motives.filter(x => x !== 'hungry') : motives;
+        motives = protagRat.sheltered ? motives.filter(x => x !== 'shelter') : motives;
+        motives = protagRat.sheltered ? motives.filter(x => x !== 'moving') : motives;
+        motives = protagRat.location == 'vents' ? motives.filter(x => x !== 'shelter') : motives;
+
+        // console.log(motives)
+        let x = motives[Math.floor(Math.random() * motives.length)]
+    },
+
     statChance: (stat) => {
         let x = 10 - stat
-        let y = []
+        let chances = []
+        //success chance
+        for (let i = 0; i < stat; i++) {
+            chances.push(1)
+        }
+        //failure chance
+        for (let i = 0; i < x; i++) {
+            chances.push(0)
+        }
 
-        for (let i = 0; i <= stat; i++) {
-            y.push(1)
+        //randomly sort array
+        newArray = []
+        cycles = chances.length
+        for (let i = 0; i < cycles; i++) {
+            let index = Math.floor(Math.random() * chances.length)
+            newArray.push(chances.splice(index, 1)[0])
         }
-        for (let i = 0; i <= x; i++) {
-            y.push(0)
-        }
-        let z = y[Math.floor(Math.random() * y.length)]
-        
-        return z
+
+        // console.log(newArray, stat)
+        let result = newArray[Math.floor(Math.random() * chances.length)]
+
+        return result
 
     },
 
@@ -530,12 +567,12 @@ const events = {
 
             let foodFound = events.statChance(protagRat.wit)
             if (foodFound) {
-                protagRat.hunger <= 0 ? protagRat.hunger = 1 : protagRat.hunger--;
+                protagRat.hunger <= 1 ? '' : protagRat.hunger--;
                 txt = `
                     <p>They dig and find some scraps!</p>
                 `
                 mthd = `
-                    ${protagCopy.ratID}.hunger <= 0 ? ${protagCopy.ratID}.hunger = 1 : ${protagCopy.ratID}.hunger--;
+                    ${protagCopy.ratID}.hunger <= 1 ? '' : ${protagCopy.ratID}.hunger--;
                     updateRatDisplay()
                 `
                 addToPlot(txt, mthd)
@@ -546,6 +583,8 @@ const events = {
                 `
                 mthd = true
                 addToPlot(txt, mthd)
+
+                events.encounter.encounterChance(protagRat, protagCopy, 2)
             }
 
         },
@@ -553,9 +592,9 @@ const events = {
         hungerPart3: (protagRat, protagCopy) => {
 
             let localRats = rats
-            .filter(obj => obj.location == protagRat.location)
-            .filter(obj => obj.ratID !== protagRat.ratID)
-            .filter(obj => obj.isAlive)
+                .filter(obj => obj.location == protagRat.location)
+                .filter(obj => obj.ratID !== protagRat.ratID)
+                .filter(obj => obj.isAlive)
 
             if (localRats[0]) {
                 let chanceFerocity = events.statChance(protagRat.ferocity)
@@ -577,30 +616,30 @@ const events = {
                     addToPlot(txt, mthd)
 
                     if (antagRat.condition == 'wounded') {
-                        protagRat.hunger <= 0 ? protagRat.hunger = 1 : protagRat.hunger--;
+                        protagRat.hunger <= 1 ? '' : protagRat.hunger--;
                         antagRat.isAlive = false
                         txt = `
-                        <img class="text-icon" src="rat-img/rat-${antagRat.icon}.gif" alt="${antagRat.name}">
+                        <img class="text-icon dead-icon" src="rat-img/rat-${antagRat.icon}.gif" alt="${antagRat.name}">
                         <p><b>${antagRat.name}</b> dies of their wounds..</p>
                     `
                         mthd = ` 
-                        ${protagCopy.ratID}.hunger <= 0 ? ${protagCopy.ratID}.hunger = 1 : ${protagCopy.ratID}.hunger--;;
+                        ${protagCopy.ratID}.hunger <= 1 ? '' : ${protagCopy.ratID}.hunger--;
                         ${antagCopy.ratID}.isAlive = false;
                         updateRatDisplay();              
                     `
                         addToPlot(txt, mthd)
 
-                        
+
                     }
 
                     else {
-                        protagRat.hunger <= 0 ? protagRat.hunger = 1 : protagRat.hunger--;
+                        protagRat.hunger <= 1 ? '' : protagRat.hunger--;
                         antagRat.condition = 'wounded'
-                        txt = `
+                        txt = `<img class="text-icon" src="rat-img/rat-${antagRat.icon}.gif" alt="${antagRat.name}">
                             <p><b>${antagRat.name}</b> is wounded!</p>
                         `
                         mthd = ` 
-                            ${protagCopy.ratID}.hunger <= 0 ? ${protagCopy.ratID}.hunger = 1 : ${protagCopy.ratID}.hunger--;;
+                            ${protagCopy.ratID}.hunger <= 1 ? '' : ${protagCopy.ratID}.hunger--;
                             ${antagCopy.ratID}.condition = 'wounded';
                             updateRatDisplay();              
                         `
@@ -642,8 +681,8 @@ const events = {
                 mthd = `${protagCopy.ratID}.location = 'vents'
                         updateRatDisplay()`
                 addToPlot(txt, mthd)
-                
-                events.moving.movingEncounter(protagRat, protagCopy)
+
+                events.encounter.encounterChance(protagRat, protagCopy, 2)
             }
         },
 
@@ -659,118 +698,22 @@ const events = {
                     updateRatDisplay()`
             addToPlot(txt, mthd)
 
-        },
-
-        movingEncounter: (protagRat, protagCopy) => {
-            let encounter = ['trap', 'enemy']
-            let chance = Math.ceil(Math.random() * 2) 
-
-            if(chance == 1){
-                let event = encounter[Math.floor(Math.random() * 2)]
-                event == 'trap' ? events.moving.movingTrap(protagRat, protagCopy): events.moving.movingEnemy(protagRat,protagCopy);
-            }
-            else{}
-        },
-
-        movingTrap: (protagRat,protagCopy) => {
-            let chanceWit = events.statChance(protagRat.wit)
-
-            txt = `<p><b>${protagRat.name}</b> encounters a wad of cheese on a <b>mouse trap</b></p>`
-            mthd = true
-            addToPlot(txt, mthd)
-
-            if(chanceWit){
-                protagRat.hunger <= 0 ? protagRat.hunger = 1 : protagRat.hunger--;
-                txt = `<p><b>${protagRat.name}</b> swats the cheese out of the trap! Free food..</p>`
-
-                mthd = `${protagCopy.ratID}.hunger <= 0 ? ${protagCopy.ratID}.hunger = 1 : ${protagCopy.ratID}.hunger--;`
-                addToPlot(txt, mthd)
-            }
-
-            else{
-
-                if(protagRat.condition == 'wounded'){
-                    protagRat.isAlive = false
-                    txt = `<p><b>${protagRat.name}</b> bites the cheese and the trap snaps their head!</p>`
-
-                    mthd = true
-                    addToPlot(txt, mthd)
-
-                    txt = `<p><b>${protagRat.name}</b> is dead..</p>`
-
-                    mthd = `${protagCopy.ratID}.isAlive = false
-                            updateRatDisplay()`
-                    addToPlot(txt, mthd)
-                }
-
-                else {
-                    protagRat.condition = 'wounded'
-                    txt = `<p><b>${protagRat.name}</b> bites the cheese and the trap snaps their nose!</p>`
-
-                    mthd = `${protagCopy.ratID}.condition = 'wounded'
-                            updateRatDisplay()`
-                    addToPlot(txt, mthd)
-                }
-            }
-        },
-
-        movingEnemy: (protagRat, protagCopy) => {
-            let chanceFerocity = events.statChance(protagRat.ferocity)
-
-            txt = `<p><b>${protagRat.name}</b> encounters a <b>spider</b>!</p>`
-            mthd = true
-            addToPlot(txt, mthd)
-
-            if(chanceFerocity){
-                protagRat.hunger <= 0 ? protagRat.hunger = 1 : protagRat.hunger--;
-                txt = `<p><b>${protagRat.name}</b> bites the spider, killing it! Free food..</p>`
-
-                mthd = `${protagCopy.ratID}.hunger <= 0 ? ${protagCopy.ratID}.hunger = 1 : ${protagCopy.ratID}.hunger--;
-                updateRatDisplay()`
-                addToPlot(txt, mthd)
-            }
-
-            else{
-
-                if(protagRat.condition == 'wounded'){
-                    protagRat.isAlive = false
-                    txt = `<p>The spider stabs <b>${protagRat.name}</b> with its fangs!</p>`
-
-                    mthd = true
-                    addToPlot(txt, mthd)
-
-                    txt = `<p><b>${protagRat.name}</b> is dead..</p>`
-
-                    mthd = `${protagCopy.ratID}.isAlive = false
-                            updateRatDisplay()`
-                    addToPlot(txt, mthd)
-                }
-
-                else{
-                    protagRat.condition = 'wounded'
-                    txt = `<p>The spider bites <b>${protagRat.name}</b>, but they live..</p>`
-
-                    mthd = `${protagCopy.ratID}.condition = 'wounded'
-                            updateRatDisplay()`
-                    addToPlot(txt, mthd)
-                }
-            }
         }
     },
 
-    shelter : {
+    shelter: {
         shelterPart1: (protagRat, protagCopy) => {
             txt = `
                 <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
                 <p>${protagRat.name} looks for the <b>${protagRat.location}</b> shelter</p>`
             mthd = true
             addToPlot(txt, mthd)
-            events.shelter.shelterPart2(protagRat,protagCopy)
+            events.shelter.shelterPart2(protagRat, protagCopy)
         },
         shelterPart2: (protagRat, protagCopy) => {
             let shelter = locStatus.filter(obj => obj.name == protagRat.location)[0]
 
-            if(shelter.occupant == 'empty'){
+            if (shelter.occupant == 'empty') {
                 protagRat.sheltered = true
                 shelter.occupant = protagRat
                 txt = `<p>${protagRat.name} settles into the empty shelter.</p>`
@@ -783,7 +726,7 @@ const events = {
                 mthd = true
                 addToPlot(txt, mthd)
             }
-            else{
+            else {
                 let antagRat = shelter.occupant
                 let antagCopy = ratsDis[antagRat.num]
                 txt = `<p>They approach the shelter, but <b>${antagRat.name}</b> lives there!</p>`
@@ -799,16 +742,16 @@ const events = {
             }
         },
         shelterPart3: (protagRat, protagCopy, antagRat, antagCopy, shelter) => {
-            
-            if(events.statChance(protagRat.ferocity)){
+
+            if (events.statChance(protagRat.ferocity)) {
                 txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
                 <p>${protagRat.name} growls fiercely at ${antagRat.name}!</p>`
 
                 mthd = true
                 addToPlot(txt, mthd)
 
-                
-                if(events.statChance(antagRat.ferocity)){
+
+                if (events.statChance(antagRat.ferocity)) {
                     txt = `<img class="text-icon" src="rat-img/rat-${antagRat.icon}.gif" alt="${antagRat.name}">
                     <p>${antagRat.name} bites at ${protagRat.name}! They will not move..</p>`
 
@@ -820,14 +763,14 @@ const events = {
 
                     mthd = true
                     addToPlot(txt, mthd)
-                    
+
                 }
 
-                else{
+                else {
                     protagRat.sheltered = true
                     antagRat.sheltered = false
                     shelter.occupant = protagRat
-                    txt = `<p>${protagRat.name} bites at ${antagRat.name}! Scaring them away.</p>`
+                    txt = `<p><b>${antagRat.name}</b> was scared away..</p>`
 
                     mthd = true
                     addToPlot(txt, mthd)
@@ -848,6 +791,123 @@ const events = {
                 addToPlot(txt, mthd)
             }
         }
+    },
+
+    encounter: {
+
+        encounterChance: (protagRat, protagCopy, chance) => {
+            let encounter = ['trap', 'enemy']
+            let result = Math.ceil(Math.random() * chance)
+
+            if (result == 1) {
+                let event = encounter[Math.floor(Math.random() * 2)]
+                event == 'trap' ? events.encounter.ratTrap(protagRat, protagCopy) : events.encounter.enemySpider(protagRat, protagCopy);
+            }
+            else { }
+        },
+
+        ratTrap: (protagRat, protagCopy) => {
+            let chanceWit = events.statChance(protagRat.wit)
+
+            txt = `<img class="text-icon" src="misc-img/rat-trap.gif" alt="rat-trap">
+            <p><b>${protagRat.name}</b> encounters a wad of cheese on a <b>mouse trap</b></p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            if (chanceWit) {
+                protagRat.hunger <= 1 ? '' : protagRat.hunger--;
+                txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                <p><b>${protagRat.name}</b> swats the cheese out of the trap! Free food..</p>`
+
+                mthd = `${protagCopy.ratID}.hunger <= 1 ? '' : ${protagCopy.ratID}.hunger--;
+                updateRatDisplay()`
+                addToPlot(txt, mthd)
+            }
+
+            else {
+
+                if (protagRat.condition == 'wounded') {
+                    protagRat.isAlive = false
+                    txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                    <p><b>${protagRat.name}</b> bites the cheese and the trap snaps their head!</p>`
+
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    txt = `<img class="text-icon dead-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                    <p><b>${protagRat.name}</b> is dead..</p>`
+
+                    mthd = `${protagCopy.ratID}.isAlive = false
+                            updateRatDisplay()`
+                    addToPlot(txt, mthd)
+                }
+
+                else {
+                    protagRat.condition = 'wounded'
+                    txt = `<p><b>${protagRat.name}</b> bites the cheese and the trap snaps their nose!</p>`
+
+                    mthd = `${protagCopy.ratID}.condition = 'wounded'
+                            updateRatDisplay()`
+                    addToPlot(txt, mthd)
+                }
+            }
+        },
+
+        enemySpider: (protagRat, protagCopy) => {
+            let chanceFerocity = events.statChance(protagRat.ferocity)
+
+            txt = `<img class="text-icon" src="misc-img/spider-1.gif" alt="spider">
+            <p><b>${protagRat.name}</b> encounters a <b>spider</b>!</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            txt = ` <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+            <p>${miscValues.acts.agitatedDumb()}</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            if (chanceFerocity) {
+                protagRat.hunger <= 1 ? '' : protagRat.hunger--;
+                txt = `<p><b>${protagRat.name}</b> bites the spider, killing it! Free food..</p>`
+
+                mthd = `${protagCopy.ratID}.hunger <= 1 ? '' : ${protagCopy.ratID}.hunger--;
+                updateRatDisplay()`
+                addToPlot(txt, mthd)
+            }
+
+            else {
+
+                if (protagRat.condition == 'wounded') {
+                    protagRat.isAlive = false
+                    txt = `<img class="text-icon" src="misc-img/spider-1.gif" alt="spider">
+                    <p>The spider stabs <b>${protagRat.name}</b> with its fangs!</p>`
+
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    txt = `<img class="text-icon dead-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                    <p><b>${protagRat.name}</b> is dead..</p>`
+
+                    mthd = `${protagCopy.ratID}.isAlive = false
+                            updateRatDisplay()`
+                    addToPlot(txt, mthd)
+                }
+
+                else {
+                    protagRat.condition = 'wounded'
+                    txt = `<img class="text-icon" src="misc-img/spider-1.gif" alt="spider">
+                    <p>The spider bites <b>${protagRat.name}</b>, but they live..</p>`
+
+                    mthd = `${protagCopy.ratID}.condition = 'wounded'
+                            updateRatDisplay()`
+                    addToPlot(txt, mthd)
+                }
+            }
+        }
+    },
+
+    search: {
+
     }
 }
 
