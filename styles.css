@@ -44,6 +44,8 @@ body {
 .rat,
 .text-container,
 .rat-status-box,
+.rat-stat-sctn,
+.rat-stat-icon-sctn,
 .text-section {
     display: flex;
     font-family: Arial,sans-serif;
@@ -196,13 +198,36 @@ body {
 .rat h4,
 .rat-status h4 {
     text-decoration: underline;
+    margin-bottom: 4px;
 }
 
 .rat img,
-.rat-status img {
+.rat-tray-icon {
     border: #8ed dotted 1px;
     margin: auto;
     width: 30px;
+}
+
+.rat-stat-sctn{
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 10px;
+    margin: 3px 0;
+}
+
+.rat-stat-icon-sctn {
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+}
+
+.shelter-icon {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    z-index: 2;
+    left: 75%;
+    right: 0;
 }
 
 .text-icon{

@@ -365,6 +365,13 @@ function updateRatDisplay() {
                 x = `<span class="stat-value danger">starved</span>`
             }
             return x
+        },
+        sheltered: (sheltered) => {
+            let x = '</>'
+            if(sheltered){
+                x = '<img class="shelter-icon" src="misc-img/shelter.png" alt="sheltered">'
+            }
+            return x
         }
     }
     for (i = 0; i < allRats; i++) {
@@ -372,11 +379,21 @@ function updateRatDisplay() {
             ratBox.innerHTML += `
             <div class="rat-status ${ratsDis[i].condition}">
                 <h4>${ratsDis[i].name}</h4>
+                <section class="rat-stat-icon-sctn">
                 <img class="rat-tray-icon" src="rat-img/rat-${ratsDis[i].icon}.gif" alt="${ratsDis[i].name}">
-                <p class="stat">ferocity: <span class="stat-value">${ratsDis[i].ferocity}</span></p>
-                <p class="stat">wit: <span class="stat-value">${ratsDis[i].wit}</span></p>
-                <p class="stat">speed: <span class="stat-value">${ratsDis[i].speed}</span></p>
-                <p class="stat">affection: <span class="stat-value">${ratsDis[i].affection}</span></p>
+                ${statFunc.sheltered(ratsDis[i].sheltered)}
+                </section>
+
+                <section class="rat-stat-sctn">
+                <p class="stat">F: <span class="stat-value">${ratsDis[i].ferocity}</span></p>
+                <p class="stat">W: <span class="stat-value">${ratsDis[i].wit}</span></p>
+                </section>
+
+                <section class="rat-stat-sctn">
+                <p class="stat">S: <span class="stat-value">${ratsDis[i].speed}</span></p>
+                <p class="stat">A: <span class="stat-value">${ratsDis[i].affection}</span></p>
+                </section>
+
                 <p class="stat"><span class="stat-value">${ratsDis[i].location}</span></p>
                 <p class="stat">${statFunc.hunger(ratsDis[i].hunger)}</p>
             </div>`
@@ -386,10 +403,17 @@ function updateRatDisplay() {
             <div class="rat-status rat-dead">
                 <h4>${ratsDis[i].name}</h4>
                 <img class="rat-tray-icon dead-icon" src="rat-img/rat-${ratsDis[i].icon}.gif" alt="${ratsDis[i].name}">
-                <p class="stat">ferocity: <span class="stat-value">${ratsDis[i].ferocity}</span></p>
-                <p class="stat">wit: <span class="stat-value">${ratsDis[i].wit}</span></p>
-                <p class="stat">speed: <span class="stat-value">${ratsDis[i].speed}</span></p>
-                <p class="stat">affection: <span class="stat-value">${ratsDis[i].affection}</span></p>
+                
+                <section class="rat-stat-sctn">
+                <p class="stat">F: <span class="stat-value">${ratsDis[i].ferocity}</span></p>
+                <p class="stat">W: <span class="stat-value">${ratsDis[i].wit}</span></p>
+                </section>
+
+                <section class="rat-stat-sctn">
+                <p class="stat">S: <span class="stat-value">${ratsDis[i].speed}</span></p>
+                <p class="stat">A: <span class="stat-value">${ratsDis[i].affection}</span></p>
+                </section>
+
                 <p class="stat"><span class="stat-value">${ratsDis[i].location}</span></p>
                 <p class="stat"><b>DEAD</b></p>
             </div>`
@@ -584,7 +608,7 @@ const events = {
                 mthd = true
                 addToPlot(txt, mthd)
 
-                events.encounter.encounterChance(protagRat, protagCopy, 2)
+                events.encounter.encounterChance(protagRat, protagCopy, 3)
             }
 
         },
@@ -596,7 +620,7 @@ const events = {
                 .filter(obj => obj.ratID !== protagRat.ratID)
                 .filter(obj => obj.isAlive)
 
-            if (localRats[0]) {
+            if (localRats[0] && !localRats[0].sheltered) {
                 let chanceFerocity = events.statChance(protagRat.ferocity)
 
                 let antagRat = localRats[Math.floor(Math.random() * localRats.length)]
@@ -660,6 +684,7 @@ const events = {
                 `
                 mthd = true
                 addToPlot(txt, mthd)
+                events.encounter.encounterChance(protagRat, protagCopy, 2)
             }
         }
     },
@@ -723,7 +748,7 @@ const events = {
 
                 txt = ` <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
                 <p>${miscValues.acts.happyDumb()}</p>`
-                mthd = true
+                mthd = `updateRatDisplay()`
                 addToPlot(txt, mthd)
             }
             else {
@@ -778,7 +803,8 @@ const events = {
                     txt = `<p>${protagRat.name} settles into the empty shelter.</p>`
 
                     mthd = `${protagCopy.ratID}.sheltered = true
-                    ${antagCopy.ratID}.sheltered = false`
+                    ${antagCopy.ratID}.sheltered = false
+                    updateRatDisplay()`
                     addToPlot(txt, mthd)
                 }
 
@@ -798,6 +824,8 @@ const events = {
         encounterChance: (protagRat, protagCopy, chance) => {
             let encounter = ['trap', 'enemy']
             let result = Math.ceil(Math.random() * chance)
+
+            protagRat.sheltered ? result = 0 : '';
 
             if (result == 1) {
                 let event = encounter[Math.floor(Math.random() * 2)]
