@@ -598,16 +598,13 @@ const events = {
             let foodFound = events.statChance(protagRat.wit)
             if (foodFound) {
                 protagRat.hunger <= 1 ? '' : protagRat.hunger--;
-                txt = `
-                    <p>They dig and find some scraps!</p>
-                `
+
+                txt = `<p>They dig and find some scraps!</p>`
                 mthd = `${protagCopy.ratID}.hunger <= 1 ? '' : ${protagCopy.ratID}.hunger--;`
                 addToPlot(txt, mthd)
             }
             else {
-                txt = `
-                    <p>They look and find nothing..</p>
-                `
+                txt = `<p>They look and find nothing..</p>`
                 mthd = true
                 addToPlot(txt, mthd)
 
@@ -722,7 +719,7 @@ const events = {
                 mthd = true
                 addToPlot(txt, mthd)
 
-                if (antagRat.wit <= 7 && events.statChance(antagRat.wit) == 0) {
+                if (antagRat.wit <= 6 && events.statChance(antagRat.wit) == 0) {
                     antagRat.hunger++
                     protagRat.hunger <= 1 ? '' : protagRat.hunger--;
 
@@ -1208,6 +1205,107 @@ const events = {
             }
         },
 
+        enemyFlexworm: (protagRat, protagCopy) => {
+            let txt
+            let mthd
+
+            txt = `<p>Something is crawling out of the ground</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            txt = `<img class="text-icon" src="misc-img/flexworm.gif" alt="flexworm">
+            <p>Its a large <b>Flexworm</b>!</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            events.emote.agitatedDumb(protagRat)
+            let misfortune = ['wound', 'hunger', 'evict']
+            let x = misfortune[Math.floor(Math.random() * 3)]
+            switch (x) {
+                case 'wound':
+                    if (protagRat.condition == 'wounded') {
+                        let shelter = locStatus.filter(obj => obj.name == protagRat.location)[0]
+                        shelter.occupant = 'empty'
+                        protagRat.sheltered = false
+                        protagRat.isAlive = false
+                        txt = `<img class="text-icon" src="misc-img/flexworm.gif" alt="flexworm">
+                        <p>The flexworm melts <b>${protagRat.name}</b> with a spray of <b>acid</b>!</p>`
+
+                        mthd = true
+                        addToPlot(txt, mthd)
+
+                        txt = `<img class="text-icon dead-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                        <p><b>${protagRat.name}</b> is dead..</p>`
+                        mthd = `${protagCopy.ratID}.isAlive = false
+                        ${protagCopy.ratID}.sheltered = false`
+                        addToPlot(txt, mthd)
+
+                        txt = `<img class="text-icon" src="misc-img/flexworm.gif" alt="flexworm">
+                        <p>The flexworm crawls back from wence it came!</p>`
+                        mthd = true
+                        addToPlot(txt, mthd)
+                    }
+
+                    else {
+                        protagRat.condition = 'wounded'
+                        txt = `<img class="text-icon" src="misc-img/flexworm.gif" alt="flexworm">
+                        <p>The flexworm sprays <b>acid</b> over<b>${protagRat.name}</b>, but they live..</p>`
+
+                        mthd = true
+                        addToPlot(txt, mthd)
+
+                        txt = `<img class="text-icon" src="misc-img/flexworm.gif" alt="flexworm">
+                        <p>The flexworm crawls back from wence it came!</p>`
+                        mthd = true
+                        addToPlot(txt, mthd)
+
+                        events.emote.agitatedDumb(protagRat)
+                    }
+                break;
+                case 'hunger':
+                    protagRat.hunger++
+                    txt = `<img class="text-icon" src="misc-img/flexworm.gif" alt="flexworm">
+                    <p>The flexworm sprays <b>toxins</b> into the air!</p>`
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                    <p><b>${protagRat.name}</b> throws up! They feel more <b>empty</b>..</p>`
+                    mthd = `${protagCopy.ratID}.hunger++`
+                    addToPlot(txt, mthd)
+
+                    txt = `<img class="text-icon" src="misc-img/flexworm.gif" alt="flexworm">
+                    <p>The flexworm crawls back from wence it came!</p>`
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    events.emote.agitatedDumb(protagRat)
+                break;
+                case 'evict':
+                    let shelter = locStatus.filter(obj => obj.name == protagRat.location)[0]
+                    shelter.occupant = 'empty'
+                    protagRat.sheltered = false
+                    txt = `<img class="text-icon" src="misc-img/flexworm.gif" alt="flexworm">
+                    <p>The flexworm <b>screams</b>! It hurts to hear!</p>`
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                    <p><b>${protagRat.name}</b> cant take it, they <b>run away</b>from the shelter..</p>`
+                    mthd = `${protagCopy.ratID}.sheltered = false`
+                    addToPlot(txt, mthd)
+
+                    txt = `<img class="text-icon" src="misc-img/flexworm.gif" alt="flexworm">
+                    <p>The flexworm crawls back from wence it came..</p>`
+                    mthd = true
+                    addToPlot(txt, mthd)
+                    
+                break;
+            }
+
+
+        },
+
         affDefence: (protagRat, protagCopy, bug) => {
             let txt
             let mthd
@@ -1232,22 +1330,22 @@ const events = {
                 if (events.statChance(antagRat.ferocity)) {
                     antagRat.hunger <= 1 ? '' : antagRat.hunger--;
                     txt = `<p><b>${antagRat.name}</b> bites the ${bug}, killing it! Free food..</p>`
-    
+
                     mthd = `${antagCopy.ratID}.hunger <= 1 ? '' : ${antagCopy.ratID}.hunger--;`
                     addToPlot(txt, mthd)
                 }
-                else{
+                else {
                     events.encounter.enemySpiderPart2(antagRat, antagCopy)
                     events.emote.happyDumb(protagRat)
                 }
             }
             else {
-                switch (bug){
+                switch (bug) {
                     case 'spider':
-                      events.encounter.enemySpiderPart2(protagRat, protagCopy)  
-                    break;
+                        events.encounter.enemySpiderPart2(protagRat, protagCopy)
+                        break;
                 }
-                
+
             }
 
         }
@@ -1265,6 +1363,10 @@ const events = {
 
             events.emote.happyDumb(protagRat)
 
+            if (Math.floor(Math.random() * 2)) {
+                events.encounter.enemyFlexworm(protagRat, protagCopy)
+            }
+
         },
 
         happyDumb: (protagRat) => {
@@ -1273,6 +1375,16 @@ const events = {
 
             txt = ` <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
             <p>${miscValues.acts.happyDumb()}</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+        },
+
+        agitatedDumb: (protagRat) => {
+            let txt
+            let mthd
+
+            txt = ` <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+            <p>${miscValues.acts.agitatedDumb()}</p>`
             mthd = true
             addToPlot(txt, mthd)
         }
