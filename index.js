@@ -467,7 +467,7 @@ function currentRound() {
             round++
             let plotArr = addToPlot()
             // console.log(plotArr)
-            readPlots = setInterval(plotReader(plotArr), 2700)
+            readPlots = setInterval(plotReader(plotArr), 3400)
         }
         else if (command == 'clear') {
             round = 1
@@ -615,16 +615,17 @@ const events = {
                 break;
         }
 
-        txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+        if (protagRat.hunger < 5){txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
         <p><b>${protagRat.name}</b> sleeps with a <b>${x}</b> stomach</p>`
         mthd = true
-        addToPlot(txt, mthd)
+        addToPlot(txt, mthd)}
+        else{}
 
         let motives = ['dream']
         // protagRat.hunger >= 3 ? motives.push('hungry') : '';
         protagRat.kills[0] ? motives.push('nightmare') : '';
         protagRat.sheltered ? '' : motives.push('enemy')
-        // protagRat.hunger == 5 ? motives = ['desperation'] : '';
+        protagRat.hunger == 5 ? motives = ['desperation'] : '';
 
         return motives[Math.floor(Math.random() * motives.length)]
     },
@@ -717,26 +718,26 @@ const events = {
             let mthd
 
             txt = `<img class="text-icon" src="misc-img/spider-1.gif" alt="spider">
-                <p><b>${protagRat.name}</b> encounters a <b>spider</b>!</p>`
-                mthd = true
+            <p><b>${protagRat.name}</b> encounters a <b>spider</b>!</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            txt = ` <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+            <p>${miscValues.acts.agitatedDumb()}</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            if (events.statChance(protagRat.ferocity)) {
+                protagRat.hunger <= 1 ? '' : protagRat.hunger--;
+                txt = `<p><b>${protagRat.name}</b> bites the spider, killing it! Free food..</p>`
+
+                mthd = `${protagCopy.ratID}.hunger <= 1 ? '' : ${protagCopy.ratID}.hunger--;`
                 addToPlot(txt, mthd)
-    
-                txt = ` <img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
-                <p>${miscValues.acts.agitatedDumb()}</p>`
-                mthd = true
-                addToPlot(txt, mthd)
-    
-                if (events.statChance(protagRat.ferocity)) {
-                    protagRat.hunger <= 1 ? '' : protagRat.hunger--;
-                    txt = `<p><b>${protagRat.name}</b> bites the spider, killing it! Free food..</p>`
-    
-                    mthd = `${protagCopy.ratID}.hunger <= 1 ? '' : ${protagCopy.ratID}.hunger--;`
-                    addToPlot(txt, mthd)
-                }
-    
-                else {
-                    events.encounter.enemySpiderPart2(protagRat, protagCopy)
-                }
+            }
+
+            else {
+                events.encounter.enemySpiderPart2(protagRat, protagCopy)
+            }
         },
         enemyNight: (protagRat, protagCopy) => {
             let txt
@@ -769,6 +770,78 @@ const events = {
             let mthd
 
 
+        },
+        desperation: (protagRat, protagCopy) => {
+            let txt
+            let mthd
+
+            txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+            <p><b>${protagRat.name}</b> is starving, they cannot rest.</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+
+            txt = `<p>they search for food..</p>`
+            mthd = true 
+            addToPlot(txt, mthd)
+
+            let options = ['spider', 'scrap']
+
+            let x = options[Math.floor(Math.random() * options.length)]
+
+
+            switch (x) {
+                case 'spider':
+                    txt = `<img class="text-icon" src="misc-img/spider-1.gif" alt="spider">
+                    <p><b>${protagRat.name}</b> encounters a <b>spider</b>!</p>`
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                    <p><b>${protagRat.name}</b> tackles it!</p>`
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    txt = `<img class="text-icon" src="misc-img/spider-1.gif" alt="spider">
+                    <p><b>Screeee</b>!</p>`
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    if(Math.floor(Math.random() * 2)){
+                        protagRat.hunger = 3
+                        txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                        <p><b>${protagRat.name}</b> engorges on spidery flesh!</p>`
+                        mthd = true
+                        addToPlot(txt, mthd)
+
+                        txt = `<p><b>${protagRat.name}</b> feels much better!</p>`
+                        mthd = `${protagCopy.ratID}.hunger = 3`
+                        addToPlot(txt, mthd)
+                    }
+                    else{
+                        protagRat.isAlive = false
+                        txt = `<p>The <b>spider</b> sinks its fangs <b>deep</b> in the weakened ${protagRat.name}</p>`
+                        mthd = true
+                        addToPlot(txt, mthd)
+
+                        txt = `<img class="text-icon dead-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                        <p><b>${protagRat.name}</b> is dead..</p>`
+                        mthd = `${protagCopy.ratID}.isAlive = false`
+                        addToPlot(txt, mthd)
+                    }
+                break;
+                case 'scrap':
+                    protagRat.hunger--
+                    txt = `<p>They dig and find some <b>scraps</b>!</p>`
+                    mthd = `${protagCopy.ratID}.hunger--;`
+                    addToPlot(txt, mthd)
+
+                    txt = `<p>Its not much, but tonight they <b>survive</b>...</p>`
+                    mthd = true
+                    addToPlot(txt, mthd)
+
+                    events.emote.happyDumb(protagRat)
+                break;
+            }
         }
     },
 
