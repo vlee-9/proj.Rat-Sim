@@ -286,10 +286,10 @@ function addToRatDisplay(newrat) {
 
             assignRatID()
             //removes start btn when < 4 rats
-            rats.length < 4 ? startBtn.style.display = 'none' : ''
+            rats.length < 5 ? startBtn.style.display = 'none' : ''
         })
     }
-    if (rats.length >= 4) {
+    if (rats.length >= 5) {
         startBtn.style.display = ''
     }
 
@@ -439,21 +439,21 @@ function currentRound() {
             roundStart.style.visibility = 'hidden'
             textBox.innerHTML += `<h3 class="round-num">Round ${round}</h3>`
             console.log(`round: ${round}`)
-
+            textBox.scrollTop = textBox.scrollHeight; //auto scroll to bottom
             const allRats = rats.length
             for (let i = 0; i < allRats; i++) {
                 rats[i].isAlive == true ? ratTurnDay(rats[i], ratsDis[i]) : '';
 
             }
 
-            let txt = `<h4 class="day-transition">Midday</h4>`
-            let mthd = true
-            addToPlot(txt, mthd)
+            // let txt = `<h4 class="day-transition">Midday</h4>`
+            // let mthd = true
+            // addToPlot(txt, mthd)
 
-            for (let i = 0; i < allRats; i++) {
-                rats[i].isAlive == true ? ratTurnDay(rats[i], ratsDis[i]) : '';
+            // for (let i = 0; i < allRats; i++) {
+            //     rats[i].isAlive == true ? ratTurnDay(rats[i], ratsDis[i]) : '';
                 
-            }
+            // }
 
             txt = `<h4 class="day-transition">Nightfall</h4>`
             mthd = true
@@ -467,7 +467,7 @@ function currentRound() {
             round++
             let plotArr = addToPlot()
             // console.log(plotArr)
-            readPlots = setInterval(plotReader(plotArr), 3400)
+            readPlots = setInterval(plotReader(plotArr), 3050)
         }
         else if (command == 'clear') {
             round = 1
@@ -506,6 +506,8 @@ function plotReader(plotArr) {
         eval(toRead[plotpoint].method)
         updateRatDisplay()
         plotpoint++
+        textBox.scrollTop = textBox.scrollHeight; //auto scroll to bottom
+
         if (plotpoint >= toRead.length) {
             clearInterval(readPlots)
             addToPlot('clear') //clears plotpoints array for new round
@@ -522,7 +524,6 @@ function plotReader(plotArr) {
             updateRatDisplay()
 
             textBox.classList.toggle('scroller')
-            textBox.scrollTop = textBox.scrollHeight; //auto scroll to bottom
         }
     }
 }
@@ -664,15 +665,55 @@ const events = {
             let mthd
             let x = protagRat.eaten[Math.floor(Math.random() * protagRat.eaten.length)]
 
-            x == undefined ? x = 'L' : '';
+            if(!x){
+                let dreams = ['vents', 'spiders', 'rat', 'food']
+                dreams = dreams[Math.floor(Math.random()*4)]
 
-            txt = `<p>They <b>dream</b>...</p>` 
+                txt = `<p>They <b>dream</b>...</p>` 
+                mthd = true
+                addToPlot(txt, mthd)
+
+                switch (dreams) {
+                    case 'vents':
+                        txt = `<p>${protagRat.name} dreams of the hollow vents...</p>` 
+                        mthd = true
+                        addToPlot(txt, mthd)
+                    break;
+                    case 'spiders':
+                        txt = `<p>${protagRat.name} dreams of <b>Spiders</b>...</p>` 
+                        mthd = true
+                        addToPlot(txt, mthd)
+
+                        events.emote.agitatedDumb(protagRat)
+                    break;
+                    case 'rat':
+                        let dreamRat = ratsDis[Math.floor(Math.random() * ratsDis.length)].name
+                        txt = `<p>${protagRat.name} dreams of <b>${dreamRat}<b>...</p>` 
+                        mthd = true
+                        addToPlot(txt, mthd)
+
+                        events.emote.agitatedDumb(protagRat)
+                    break;
+                    case 'food':
+                        txt = `<p>${protagRat.name} dreams of food...</p>` 
+                        mthd = true
+                        addToPlot(txt, mthd)
+
+                        txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                        <p><b>* drools *</b>...</p>` 
+                        mthd = true
+                        addToPlot(txt, mthd)
+                    break;
+                }
+            }
+
+           else {txt = `<p>They <b>dream</b>...</p>` 
             mthd = true
             addToPlot(txt, mthd)
 
             txt = `<p>The <b>${x}</b> they ate swirls in their memory</p>`
             mthd = true
-            addToPlot(txt, mthd)
+            addToPlot(txt, mthd)}
             
             //add encounter chance?
         },
@@ -784,7 +825,7 @@ const events = {
             mthd = true 
             addToPlot(txt, mthd)
 
-            let options = ['spider', 'scrap']
+            let options = ['spider', 'scrap', 'spider']
 
             let x = options[Math.floor(Math.random() * options.length)]
 
