@@ -464,6 +464,8 @@ function currentRound() {
 
             }
 
+            round % 2 ? '' : events.calamity.colapse()
+
             round++
             let plotArr = addToPlot()
             // console.log(plotArr)
@@ -569,7 +571,9 @@ function ratTurnNight(protagRat, protagCopy) {
     }
 }
 
-// GAME EVENTS //
+/////////////////////////
+////// GAME EVENTS //////
+/////////////////////////
 
 const events = {
     motiveDay: (protagRat) => {
@@ -1816,6 +1820,89 @@ const events = {
                     break;
             }
         }
+    },
+
+    calamity: {
+        colapse: () => {
+            let txt
+            let mthd
+
+            let locale = locStatus[Math.floor(Math.random() * 4)]
+            let localRats = rats.filter(obj => obj.location == locale.name)
+            let localRatsCopy = ratsDis.filter(obj => obj.location == locale.name)
+
+            txt = `<p>The <b>${locale.name}</b> crumbles..Rocks and Debris fall from above.</p>`
+            mthd = true 
+            addToPlot(txt, mthd)
+
+            const allRats = localRats.length
+            for (let i = 0; i < allRats; i++) {
+                localRats[i].isAlive == true ? events.calamity.escapeTurn(localRats[i], localRatsCopy[i]) : '';
+
+            }
+
+            txt = `<p>The <b>${locale.name}</b> is destroyed...</p>`
+            mthd = true 
+            addToPlot(txt, mthd)
+
+            locStatus = locStatus.filter(obj => obj.name !== locale.name)
+
+        },
+
+        escapeTurn: (protagRat, protagCopy) => {
+            let txt
+            let mthd
+            let survival = events.statChance(protagRat.speed)
+
+            txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+            <p>${protagRat.name} scrambles to escape!</p>`
+            mthd = true
+            addToPlot(txt, mthd)
+            
+            if(survival){
+                protagRat.location = 'vents'
+                protagRat.sheltered = false
+                txt = `<p>${protagRat.name} avoids the falling debris and escape to the <b>vents</b>!</p>`
+                mthd = `${protagCopy.ratID}.location = 'vents'
+                ${protagCopy.ratID}.sheltered = false`
+                addToPlot(txt, mthd)
+            }
+            else {
+                events.calamity.escapeTurnP2(protagRat, protagCopy)
+            }
+
+           
+             
+        },
+
+        escapeTurnP2: (protagRat,protagCopy) => {
+            let txt
+            let mthd
+
+            if (protagRat.condition == 'wounded'){
+                protagRat.isAlive = false
+                protagRat.sheltered = false
+                txt = `<p>${protagRat.name} is <b>crushed</b> by a massive rock!</p>`
+                mthd = `${protagCopy.ratID}.isAlive = false
+                ${protagCopy.ratID}.sheltered = false`
+                addToPlot(txt, mthd)
+            }
+            else {
+                protagRat.location = 'vents'
+                protagRat.sheltered = false
+                protagRat.condition = 'wounded'
+                txt = `<p>${protagRat.name} is <b>crushed</b> by a massive rock!</p>`
+                mthd = `${protagCopy.ratID}.location = 'vents'
+                ${protagCopy.ratID}.sheltered = false
+                ${protagCopy.ratID}.condition = 'wounded'`
+                addToPlot(txt, mthd)
+            }
+
+        }
+
+        // escapeTurnP3: () => {
+
+        // }
     },
 
     emote: {
