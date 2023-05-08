@@ -464,12 +464,14 @@ function currentRound() {
 
             }
 
-            round % 2 ? '' : events.calamity.colapse()
+            let even
+            round % 2 ? even = false : even = true; 
+            even && round < 7  ? events.calamity.colapse() : '';
 
             round++
             let plotArr = addToPlot()
             // console.log(plotArr)
-            readPlots = setInterval(plotReader(plotArr), 3050)
+            readPlots = setInterval(plotReader(plotArr), 950)
         }
         else if (command == 'clear') {
             round = 1
@@ -1162,11 +1164,16 @@ const events = {
             let txt
             let mthd
 
-            let locations = ['Laboratory', 'Trash Pits', 'Burn Room', 'Storage']
+            let locations = []
+            let availLoc = locStatus.length
+            for (let i = 0; i < availLoc; i++){
+                locations.push(locStatus[i].name)
+            }
             locations.filter(x => x !== protagRat.location)
             let newLoc = locations[Math.floor(Math.random() * locations.length)]
 
             protagRat.location = newLoc
+            console.log(protagRat.location)
 
             txt = `<p><b>${protagRat.name}</b> moves to the <b>${newLoc}</b></p>`
             mthd = `${protagCopy.ratID}.location = '${newLoc}'`
@@ -1827,9 +1834,13 @@ const events = {
             let txt
             let mthd
 
-            let locale = locStatus[Math.floor(Math.random() * 4)]
-            let localRats = rats.filter(obj => obj.location == locale.name)
-            let localRatsCopy = ratsDis.filter(obj => obj.location == locale.name)
+            let locale = locStatus[Math.floor(Math.random() * locStatus.length)]
+            let locName = locale.name
+            console.log(JSON.stringify(locName))
+            let localRats = rats.filter(obj => obj.location == locName)
+            console.log(JSON.stringify(localRats))
+            let localRatsCopy = ratsDis.filter(obj => obj.location == locName)
+            console.log(JSON.stringify(localRatsCopy))
 
             txt = `<p>The <b>${locale.name}</b> crumbles..Rocks and Debris fall from above.</p>`
             mthd = true 
@@ -1875,13 +1886,15 @@ const events = {
              
         },
 
-        escapeTurnP2: (protagRat,protagCopy) => {
+        escapeTurnP2: (protagRat, protagCopy) => {
             let txt
             let mthd
 
             if (protagRat.condition == 'wounded'){
                 protagRat.isAlive = false
                 protagRat.sheltered = false
+                console.log(protagRat.isAlive)
+
                 txt = `<p>${protagRat.name} is <b>crushed</b> by a massive rock!</p>`
                 mthd = `${protagCopy.ratID}.isAlive = false
                 ${protagCopy.ratID}.sheltered = false`
