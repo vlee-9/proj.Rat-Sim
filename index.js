@@ -471,7 +471,7 @@ function currentRound() {
             round++
             let plotArr = addToPlot()
             // console.log(plotArr)
-            readPlots = setInterval(plotReader(plotArr), 950)
+            readPlots = setInterval(plotReader(plotArr), 3040)
         }
         else if (command == 'clear') {
             round = 1
@@ -856,7 +856,7 @@ const events = {
                     if(Math.floor(Math.random() * 2)){
                         protagRat.hunger = 3
                         txt = `<img class="text-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
-                        <p><b>${protagRat.name}</b> engorges on spidery flesh!</p>`
+                        <p><b>${protagRat.name}</b> gorges on spidery flesh!</p>`
                         mthd = true
                         addToPlot(txt, mthd)
 
@@ -1839,7 +1839,10 @@ const events = {
             console.log(JSON.stringify(locName))
             let localRats = rats.filter(obj => obj.location == locName)
             console.log(JSON.stringify(localRats))
-            let localRatsCopy = ratsDis.filter(obj => obj.location == locName)
+            let localRatsCopy = []
+            for (let i = 0; i < localRats.length;i++ ){
+                localRatsCopy.push(ratsDis[localRats[i].num])
+            }
             console.log(JSON.stringify(localRatsCopy))
 
             txt = `<p>The <b>${locale.name}</b> crumbles..Rocks and Debris fall from above.</p>`
@@ -1891,24 +1894,32 @@ const events = {
             let mthd
 
             if (protagRat.condition == 'wounded'){
+                console.log('hellooo')
                 protagRat.isAlive = false
                 protagRat.sheltered = false
                 console.log(protagRat.isAlive)
+                console.log('wtf')
 
                 txt = `<p>${protagRat.name} is <b>crushed</b> by a massive rock!</p>`
-                mthd = `${protagCopy.ratID}.isAlive = false
-                ${protagCopy.ratID}.sheltered = false`
+                mthd = `${protagCopy.ratID}.sheltered = false`
+                addToPlot(txt, mthd)
+
+                txt = `<img class="text-icon dead-icon" src="rat-img/rat-${protagRat.icon}.gif" alt="${protagRat.name}">
+                <p><b>${protagRat.name}</b> is dead..</p>`
+                mthd = `${protagCopy.ratID}.isAlive = false`
                 addToPlot(txt, mthd)
             }
             else {
                 protagRat.location = 'vents'
                 protagRat.sheltered = false
                 protagRat.condition = 'wounded'
-                txt = `<p>${protagRat.name} is <b>crushed</b> by a massive rock!</p>`
+                txt = `<p>A rock falls on ${protagRat.name}, but they live..</p>`
                 mthd = `${protagCopy.ratID}.location = 'vents'
                 ${protagCopy.ratID}.sheltered = false
                 ${protagCopy.ratID}.condition = 'wounded'`
                 addToPlot(txt, mthd)
+
+                events.emote.agitatedDumb(protagRat)
             }
 
         }
