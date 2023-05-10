@@ -51,11 +51,14 @@ body {
     width: 100%;
 }
 
-#round-btn {
+#round-btn,
+#restart-btn {
     background-color: #8ed;
     color: #000;
     border: none;
     cursor: pointer;
+    font-size: 17px;
+    font-weight: bold;
 }
 
 .cust-container,
@@ -197,22 +200,30 @@ body {
 
 .text-section {
    grid-template-columns: 50px 1fr;
-   height: 50px;
    width: 80%;
    margin: auto;
    margin-bottom: 7px;
    font-family: Arial, sans-serif;
    align-items: center;
+   min-height: 40px;
 }
 
 .text-section p {
     text-align: left;
     grid-column: 2/-1;
-    
 }
 
 .text-section h4 {
     grid-column: 1 / -1;
+    
+}
+
+.winner-icon {
+    grid-column: 1/-1;
+    margin: auto;
+    margin-top: 27px;
+    width: 80px;
+    border: #4ba double 5px ;
 }
 
 .day-transition {
@@ -220,8 +231,6 @@ body {
     font-size: larger;
     text-align: center;
 }
-
-
 
 .rat-array-box,
 .rat-status-box {
