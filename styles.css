@@ -8,6 +8,39 @@ body {
     color: #fde;
 }
 
+header {
+    min-height: 7vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-image: radial-gradient(#46a 1px, #000 2px);
+    box-shadow: inset 0 -15px 21px 1px #000;
+    background-size: 10px 10px;
+    background-position: 10px;   
+    animation-name: dots;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes dots {
+    0%   {background-position: 10px;}
+    100% {background-position: 49px;;}
+}
+
+
+
+header h2 {
+    font-size: 20px;
+    font-family: 'Sigmar', cursive;
+    /* margin-right: auto; */
+}
+header p {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    font-size: 10px;
+}
+
 .error {
     color: #f11;
     text-decoration: underline;
@@ -16,18 +49,17 @@ body {
 
 .btn-basic {
     margin: 5px;
-    background-color: #8ed;
+    background: #8ed;
     color: #000;
     border: none;
-    padding: 6px 10px;
+    padding: 10px 14px;
     font-weight: bold;
     border-radius: 2px;
-    border-bottom: solid 3px #fff;
 }
 
+
 .btn-basic:active {
-    border-bottom: none;
-    border-top: solid 3px #4ba;
+    background: #7cf;
 }
 
 .btn-subtle {
@@ -49,6 +81,8 @@ body {
 
 #quit-btn {
     width: 100%;
+    grid-row: 3/-1;
+    grid-column: 1/2;
 }
 
 #round-btn,
@@ -59,26 +93,27 @@ body {
     cursor: pointer;
     font-size: 17px;
     font-weight: bold;
+    grid-column: 2/-1;
 }
+
 
 .cust-container,
 .game-container {
     margin: auto;
-    margin-top: 75px;
     text-align: center;
     position: relative;
-    max-width: 900px;
+    
     font-family: Arial, sans-serif;
 }
 
 .game-container {
-    grid-template-columns: 1fr minmax(300px, 1fr) 75px;
-    grid-template-rows: 380px 50px;
-    border: #666 solid;
+    height: 93vh;
+    max-width: 900px;
+    grid-template-columns: 85px 1fr;
+    grid-template-rows: 1fr 1fr 35px;
 }
 
 .game-container,
-.rat-array-box,
 .rat-status-box,
 .text-section {
     display: grid;
@@ -86,6 +121,7 @@ body {
 
 .cust-box,
 .att-box,
+.rat-array-box,
 .rat,
 .rat-stat-sctn,
 .rat-stat-icon-sctn {
@@ -100,10 +136,8 @@ body {
 }
 
 .cust-box {
-    border: double 4px #fde;
-    border-radius: 15px;
-    width: 270px;
-    height: 420px;
+    max-width: 270px;
+    height: 360px;
     margin: auto;
     text-align: center;
 }
@@ -145,13 +179,14 @@ body {
 
 .att-box p {
     font-weight: bold;
+    font-size: 18px;
     color: #fff;
 }
 
 
 .att-box button {
     font-weight: bolder;
-    font-size: 20px;
+    font-size: 18px;
     border: none;
     background-color: #00000000;
     cursor: pointer;
@@ -177,12 +212,11 @@ body {
 }
 
 .text-container {
+    grid-column: 1/-1;
     overflow: hidden;
-    padding-bottom: 50px;
-    border-right: #666 dotted;
-
-    grid-column: 1/2;
-    grid-row: 1/-1;
+    border-bottom: #666 dotted;
+    border-top: #666 dotted;
+    min-height: 70px;
 }
 
 .scroller {
@@ -199,13 +233,13 @@ body {
 }
 
 .text-section {
-   grid-template-columns: 50px 1fr;
-   width: 80%;
-   margin: auto;
-   margin-bottom: 7px;
-   font-family: Arial, sans-serif;
-   align-items: center;
-   min-height: 40px;
+    grid-template-columns: 50px 1fr;
+    width: 80%;
+    margin: auto;
+    margin-bottom: 7px;
+    font-family: Arial, sans-serif;
+    align-items: center;
+    min-height: 40px;
 }
 
 .text-section p {
@@ -215,7 +249,7 @@ body {
 
 .text-section h4 {
     grid-column: 1 / -1;
-    
+
 }
 
 .winner-icon {
@@ -223,7 +257,7 @@ body {
     margin: auto;
     margin-top: 27px;
     width: 80px;
-    border: #4ba double 5px ;
+    border: #4ba double 5px;
 }
 
 .day-transition {
@@ -232,39 +266,40 @@ body {
     text-align: center;
 }
 
-.rat-array-box,
 .rat-status-box {
+    padding-bottom: 7px;
     align-items: center;
     justify-content: center;
     grid-template-columns: repeat(4, 1fr);
     grid-auto-rows: auto;
     align-items: center;
-}
-
-.rat-array-box {
-    max-width: 600px;
-    margin: 0 auto;
-    grid-template-columns: repeat(4, 115px);
-}
-
-.rat-status-box {
-    grid-column: 2 / -1;
+    grid-column: 1/-1;
     grid-gap: 2px;
 }
 
+.rat-array-box {
+    margin: 0 auto;
+    margin-top: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+
 .rat {
+    font-size: 13px;
     flex-direction: column;
     border: #8ed solid 2px;
     border-radius: 7px;
-    min-width: 110px;
-    min-height: 175px;
+    min-width: 100px;
+    min-height: 145px;
     padding: 5px;
-    margin: 10px;
 }
 
 .rat-status {
     height: 100%;
     padding-top: 7px;
+    font-size: 11px;
 }
 
 
@@ -282,9 +317,10 @@ body {
 }
 
 .rat-stat-sctn {
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    padding: 0 10px;
+    gap: 4px;
+    padding: 0 5px;
     margin: 3px 0;
 }
 
@@ -327,14 +363,73 @@ body {
 
 
 .wounded {
-    border: #ff1 dotted 2px;
+    border: #ff1 dotted 1px;
 }
 
 .rat-dead {
-    border: #f11 dotted 2px;
+    border: #f11 dotted 1px;
 }
 
 .dead-icon {
     filter: grayscale(90%);
     border: #fde solid 1px;
+}
+
+@media (min-width: 550px){
+
+    .rat-status {
+        font-size: 13px;
+    }
+}
+
+@media (min-width: 650px) {
+
+    header {
+        height: 110px;
+        margin-bottom: 15px;
+        justify-content: center;
+        flex-direction: column;
+        background-size: 20px 20px;
+    }
+
+    header h2 {
+        font-size: 50px;
+    }
+
+    header p {
+        margin-top: -7px;
+        font-size: 13px;
+    }
+
+    .game-container {
+        border: #666 solid;
+        margin-top: 80px;
+        height: auto;
+        grid-template-columns: 1fr minmax(300px, 1fr) 75px;
+        grid-template-rows: 380px 50px;
+    }
+
+    .text-container {
+        grid-column: 1/2;
+        grid-row: 1/-1;
+        padding-bottom: 50px;
+        border-right: #666 dotted;
+        border-bottom: none;
+        border-top: none;
+    }
+
+    .rat-status-box {
+        grid-column: 2 / -1;
+        padding-bottom: 0;
+    }
+    .rat-status {
+        font-size: 15px;
+    }
+
+    #quit-btn,
+    #round-btn,
+    #restart-btn{
+        grid-column: auto;
+        grid-row: auto;
+    }
 }

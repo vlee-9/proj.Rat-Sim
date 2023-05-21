@@ -37,7 +37,7 @@ const textBox = document.getElementById('text-box')
 const ratBox = document.getElementById('rat-stats')
 const quiteBtn = document.getElementById("quit-btn")
 
-startBtn.style.display = 'none'
+startBtn.style.visibility = 'hidden'
 restartBtn.style.display = 'none'
 roundBtn.style.visibility = 'hidden'
 gameContainer.style.display = 'none'
@@ -212,6 +212,7 @@ const ratDisplayTray = document.getElementById("rat-tray")
 
 randomRatBtn.addEventListener('click', function ratRandomizer() {
     const names = ["Jogun", "Misser", "Loosh", "Patten", "Lop", "Bóck", "Björn", "lithete", "Ulmm", "Olmaes", "Aptat", "Abby", "Jake", "Tom", "Aless", "Alice", "Tread", "Red", "Holly", "Sister", "Marge", "Kapuy", "Illum", "Ill", "Robin", "Royce", "Jacette", "Lord", "General", "Furry", "Wolf", "Bun-Bun", "Frogert", "Alpine"]
+    
     const locations = ['Laboratory', 'Trash Pits', 'Burn Room', 'Storage']
     let newRat = {
         name: names[Math.floor(Math.random() * names.length)],
@@ -288,11 +289,11 @@ function addToRatDisplay(newrat) {
 
             assignRatID()
             //removes start btn when < 4 rats
-            rats.length < 5 ? startBtn.style.display = 'none' : ''
+            rats.length < 5 ? startBtn.style.visibility = 'hidden' : ''
         })
     }
     if (rats.length >= 5) {
-        startBtn.style.display = ''
+        startBtn.style.visibility = 'visible'
     }
 
     sortRatBySp()
@@ -1281,7 +1282,7 @@ const events = {
 
             let shelter = locStatus.filter(obj => obj.name == protagRat.location)[0]
 
-            if (shelter.occupant == 'empty') {
+            if (shelter.occupant == 'empty' || shelter.occupant.isAlive !== true) {
                 protagRat.sheltered = true
                 shelter.occupant = protagRat
                 txt = `<p>${protagRat.name} settles into the empty shelter.</p>`
@@ -2062,7 +2063,7 @@ quiteBtn.addEventListener('click', resetAll = () => {
     ratDisplayTray.innerHTML = ''
     ratBox.innerHTML = ''
     textBox.innerHTML = ''
-    startBtn.style.display = 'none'
+    startBtn.style.visibility = 'hidden'
     restartBtn.style.display = 'none'
     roundBtn.style.visibility = 'hidden'
     ratError.textContent = ''
