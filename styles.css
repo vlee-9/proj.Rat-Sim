@@ -260,6 +260,13 @@ header p {
     border: #4ba double 5px;
 }
 
+.specter-icon{
+    grid-column: 1/-1;
+    margin: auto;
+    width: 200px;
+    border: none;
+}
+
 .day-transition {
     font-weight: 600;
     font-size: larger;
@@ -375,7 +382,7 @@ header p {
     border: #fde solid 1px;
 }
 
-@media (min-width: 550px){
+@media (min-width: 370px){
 
     .rat-status {
         font-size: 13px;
