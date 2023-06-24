@@ -263,7 +263,8 @@ header p {
 .specter-icon{
     grid-column: 1/-1;
     margin: auto;
-    width: 200px;
+    min-height: 300px;
+    width: 100%;
     border: none;
 }
 
@@ -307,6 +308,7 @@ header p {
     height: 100%;
     padding-top: 7px;
     font-size: 11px;
+    border: #4ba dotted 1px;
 }
 
 
