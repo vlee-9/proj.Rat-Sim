@@ -233,18 +233,37 @@ header p {
 }
 
 .text-section {
-    grid-template-columns: 50px 1fr;
+    grid-template-columns: 50px 1fr 40px;
     width: 80%;
     margin: auto;
-    margin-bottom: 7px;
+    margin-bottom: 12px;
     font-family: Arial, sans-serif;
     align-items: center;
     min-height: 40px;
 }
 
-.text-section p {
+.text-section p:not(.calamity-txt) {
     text-align: left;
-    grid-column: 2/-1;
+    grid-column: 2/3;
+}
+
+.success,
+.failure {
+    grid-column: 3/-1;
+}
+
+.success{
+    color: #6c0;
+}
+.failure {
+    color: #f11;
+}
+
+.calamity-txt {
+    font-size: 17px;
+    font-weight: bold;
+    grid-column: 1/-1;
+    margin: 15px 0 15px 0;
 }
 
 .text-section h4 {
@@ -260,12 +279,21 @@ header p {
     border: #4ba double 5px;
 }
 
-.specter-icon{
+.specter-icon,
+.scene-icon{
     grid-column: 1/-1;
     margin: auto;
+    border: none;
+}
+
+.specter-icon{
     min-height: 300px;
     width: 100%;
-    border: none;
+}
+
+.scene-icon{
+    min-height: 150px;
+    width: 50%;
 }
 
 .day-transition {
@@ -421,7 +449,7 @@ header p {
     .text-container {
         grid-column: 1/2;
         grid-row: 1/-1;
-        padding-bottom: 50px;
+        padding-bottom: 55px;
         border-right: #666 dotted;
         border-bottom: none;
         border-top: none;
