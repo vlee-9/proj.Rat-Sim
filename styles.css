@@ -233,7 +233,7 @@ header p {
 }
 
 .text-section {
-    grid-template-columns: 50px 1fr 40px;
+    grid-template-columns: 50px 1fr 35px;
     width: 80%;
     margin: auto;
     margin-bottom: 12px;
@@ -250,6 +250,7 @@ header p {
 .success,
 .failure {
     grid-column: 3/-1;
+    text-align: right;
 }
 
 .success{
